@@ -102,7 +102,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\Users\dovyasf\Desktop\VS_Projects\Battle City SDL2\BattleCitySDL2\SDL2-2.0.10\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Users\dovyasf\Desktop\VS_Projects\Battle City SDL2\BattleCitySDL2\Battle City;D:\Users\dovyasf\Desktop\VS_Projects\Battle City SDL2\BattleCitySDL2\SDL2-2.0.10\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>Default</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -144,17 +145,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameMap.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Rendering.cpp" />
     <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="Vectors.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\NES_01.bmp" />
     <Image Include="Tileset.bmp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game.h" />
     <ClInclude Include="GameMap.h" />
     <ClInclude Include="GameObjects.h" />
+    <ClInclude Include="Rendering.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="Vectors.h" />
   </ItemGroup>
