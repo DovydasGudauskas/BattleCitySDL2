@@ -1,4 +1,7 @@
+#pragma once
+
 #include <SDL.h>
+#include <MainMenu.h>
 
 enum class GameState
 {
@@ -6,24 +9,22 @@ enum class GameState
 	InGame
 };
 
-#define MainMenu GameState::MainMenu
-#define InGame GameState::InGame
-
 class Game
 {
 public:
-	Game():gameWindow(nullptr), currentGameState(MainMenu)
-	{
-		if(singleton == nullptr)
-			singleton = this;
-	}
+
+	Game();
 	~Game();
 
-	void InitializeGame();
-	void StartTicking();
-	void QuitGame();
+	void StartGame();
+	void StartNewGame(int mode);
 
+	static Game* GetReference();
+
+	void QuitGame();
 private:
+	MainMenu mainMenu;
+
 	static Game* singleton;
 
 	GameState currentGameState;
@@ -31,6 +32,9 @@ private:
 	SDL_Window* gameWindow;
 
 	void RenderGame();
+
 	void TickInGame();
 	void TickMainMenu();
+
+	void StartTicking();
 };

@@ -1,4 +1,6 @@
-#include <SDL.h>
+#include <Game.h>
+
+/*#include <SDL.h>
 #include <vector>
 #include <Windows.h>
 #include <string>
@@ -6,7 +8,7 @@
 #include "GameObjects.h"
 
 using namespace std;
-
+*/
 /*
 
 
@@ -20,7 +22,7 @@ void HandleAllEnemyTanks()
 				else FireBullet(Position.x+32-8, Position.y+32-8, Dir);//right
 }
 */
-
+/*
 vector<SpriteObject*> Objects;
 vector<EnemyTank*> Enemies;
 vector<PlayerTank*> PlayerTanks;
@@ -173,21 +175,14 @@ void AddPlayer(int which)
 	Objects.push_back(PlayerOne);
 	PlayerTanks.push_back(PlayerOne);
 }
-
+*/
 int main(int argc, char* argv[])
 {
-	SDL_Init(SDL_INIT_EVERYTHING);
-	SDL_Window* Window = SDL_CreateWindow("Battle city", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, (int)(MainRes.x * ResScale.x), (int)(MainRes.y * ResScale.y), SDL_WINDOW_SHOWN);
-	SDL_Renderer* Renderer = SDL_CreateRenderer(Window, -1, SDL_RENDERER_ACCELERATED);
+	Game* newGame = Game::GetReference();
+	newGame->StartGame();
 
-	SDL_Surface* Icon = SDL_LoadBMP("Icon.bmp");
-	SDL_SetWindowIcon(Window, Icon);
-	SDL_FreeSurface(Icon);
-
-	SDL_Surface* Surface = SDL_LoadBMP("Tileset.bmp");
-	SDL_Texture* Tileset = SDL_CreateTextureFromSurface(Renderer, Surface);
-	SDL_FreeSurface(Surface);
-
+	return 0;
+	/*
 	InitializeMap(Tileset, ResScale.x, ResScale.y);
 	LoadMap(0);
 
@@ -214,5 +209,5 @@ int main(int argc, char* argv[])
 	SDL_DestroyRenderer(Renderer);
 	SDL_DestroyWindow(Window);
 	SDL_Quit();
-	return 0;
+	return 0;*/
 }

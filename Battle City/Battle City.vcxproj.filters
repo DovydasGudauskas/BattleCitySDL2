@@ -33,12 +33,24 @@
     <ClCompile Include="Vectors.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SpriteObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MainMenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Text.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Tileset.bmp">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="..\NES_01.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\NES_00.bmp">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
@@ -61,5 +73,18 @@
     <ClInclude Include="Rendering.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SpriteObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MainMenu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Text.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
 </Project>

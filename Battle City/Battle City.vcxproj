@@ -148,11 +148,15 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameMap.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Rendering.cpp" />
     <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="SpriteObject.cpp" />
+    <ClCompile Include="Text.cpp" />
     <ClCompile Include="Vectors.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\NES_00.bmp" />
     <Image Include="..\NES_01.bmp" />
     <Image Include="Tileset.bmp" />
   </ItemGroup>
@@ -160,9 +164,16 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameMap.h" />
     <ClInclude Include="GameObjects.h" />
+    <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Rendering.h" />
     <ClInclude Include="Sprite.h" />
+    <ClInclude Include="SpriteObject.h" />
+    <ClInclude Include="Text.h" />
     <ClInclude Include="Vectors.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

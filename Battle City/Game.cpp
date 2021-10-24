@@ -1,21 +1,46 @@
-#include "Game.h"
+#include <Game.h>
+#include <Windows.h> // GetAsyncKeyState
+
+#include <Rendering.h>
+#include <Vectors.h>
+
+#include <GameMap.h>
+
 /*#include "Vectors.h"
 #include "Sprite.h"
 #include "Rendering.cpp"*/
+
+Game* Game::singleton = nullptr;
+
+Game::Game():gameWindow(nullptr), currentGameState(GameState::MainMenu), mainMenu(MainMenu())
+{
+	if (singleton == nullptr)
+		singleton = this;
+}
 
 Game::~Game()
 {
 }
 
-void Game::InitializeGame()
+void Game::StartGame()
 {
-	/*Vector2 MainRes(255, 223), ResScale(4., 4.);
+	Vector2 MainRes(256, 224);
+
+	Rendering* rendering = Rendering::GetReference();
+	Vector2 ResScale = rendering->GetRenderScale();
+
+	// Initialize SDL
+	SDL_Init(SDL_INIT_EVERYTHING);
 
 	// Create window
-	SDL_Init(SDL_INIT_EVERYTHING);
-	gameWindow = SDL_CreateWindow("Battle city", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, (int)(MainRes.x * ResScale.x), (int)(MainRes.y * ResScale.y), SDL_WINDOW_SHOWN);
+	gameWindow = SDL_CreateWindow("Battle city",
+		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+		(int)(MainRes.x * ResScale.x), (int)(MainRes.y * ResScale.y),
+		SDL_WINDOW_SHOWN);
+
+	// Set renderer
 	SDL_Renderer* mainRenderer = SDL_CreateRenderer(gameWindow, -1, SDL_RENDERER_ACCELERATED);
-	Rendering::SetRenderer(mainRenderer);
+	rendering->SetRenderer(mainRenderer);
 
 	// Load window icon
 	SDL_Surface* Icon = SDL_LoadBMP("Icon.bmp");
@@ -24,21 +49,33 @@ void Game::InitializeGame()
 
 	// Load tileset
 	SDL_Surface* Surface = SDL_LoadBMP("Tileset.bmp");
-	Rendering::SetTileset(SDL_CreateTextureFromSurface(mainRenderer, Surface));
+	rendering->SetTileset(SDL_CreateTextureFromSurface(mainRenderer, Surface));
 	SDL_FreeSurface(Surface);
 
-	InitializeAllSprites();*/
+	//InitializeAllSprites();
+
+	StartTicking();
+}
+
+void Game::StartNewGame(int mode)
+{
+	currentGameState = GameState::InGame;
+	mainMenu.Enable(false);
+	GameMap::GetReference()->LoadMap(0);
 }
 
 void Game::TickMainMenu()
 {
+	mainMenu.Tick();
+}
 
+void Game::RenderGame()
+{
 }
 
 void Game::TickInGame()
 {
-	/*if (GetAsyncKeyState(VK_ESCAPE) && 0x8000) break;
-
+	/*
 	HandlePlayerMovements(PlayerTanks[0]);
 	HandleEnemyUnits(&PlayerTanks);
 	HandleCollision();
@@ -49,25 +86,34 @@ void Game::TickInGame()
 
 void Game::StartTicking()
 {
-	for (;;)
+	while (!GetAsyncKeyState(VK_ESCAPE))
 	{
+		bool run = true;
+		SDL_Event event;
+		while (SDL_PollEvent(&event))
+			if (event.type == SDL_QUIT) run = false;
+
+		if (!run)
+			break;
+
+
 		SDL_Delay(17);
 
 		switch (currentGameState)
 		{
-		case MainMenu:
+		case GameState::MainMenu:
 			TickMainMenu();
+			Rendering::GetReference()->RenderMainMenu();
 			break;
 
-		case InGame:
+		case GameState::InGame:
 			TickInGame();
+			Rendering::GetReference()->RenderGame();
 			break;
 
 		default:
 			break;
-		}
-
-		//Rendering::RenderGame(mainRenderer);
+		}	
 	}
 
 	QuitGame();
@@ -77,7 +123,19 @@ void Game::QuitGame()
 {
 	//UnloadMemory();
 
-	/*SDL_DestroyRenderer(mainRenderer);
+	SDL_Renderer* renderer = Rendering::GetReference()->GetRenderer();
+
+	if(renderer != nullptr)
+		SDL_DestroyRenderer(renderer);
+
 	SDL_DestroyWindow(gameWindow);
-	SDL_Quit();*/
+	SDL_Quit();
+}
+
+Game* Game::GetReference()
+{
+	if (singleton == nullptr)
+		return new Game();
+
+	return singleton;
 }

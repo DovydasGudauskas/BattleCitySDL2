@@ -1,8 +1,10 @@
-
+#pragma once
 
 class Vector2
 {
 public:
+	static Vector2 up, down, right, left;
+
 	double x, y;
 
 	Vector2();
