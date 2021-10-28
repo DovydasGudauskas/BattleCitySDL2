@@ -5,10 +5,7 @@
 #include <Vectors.h>
 
 #include <GameMap.h>
-
-/*#include "Vectors.h"
-#include "Sprite.h"
-#include "Rendering.cpp"*/
+#include <Debug.h>
 
 Game* Game::singleton = nullptr;
 
@@ -61,7 +58,29 @@ void Game::StartNewGame(int mode)
 {
 	currentGameState = GameState::InGame;
 	mainMenu.Enable(false);
+	LoadLevel(0);
+}
+
+static Text* temp = nullptr;
+
+void Game::LoadLevel(int lvl)
+{
 	GameMap::GetReference()->LoadMap(0);
+
+	CreateNewPlayer(playerSpawnPoints[0]);
+
+	temp = new Text();
+	temp->SetPosition(Vector2(4, 220));
+}
+
+void Game::CreateNewPlayer(Vector2 spawnPos)
+{
+	Tank* playerTank = new Tank(0, 1, 0);
+
+	PlayerController* player = new PlayerController();
+	player->SetControlTank(playerTank);
+
+	Debug::GetReference()->DebugTank(playerTank, Vector2(4, 220));
 }
 
 void Game::TickMainMenu()
@@ -69,12 +88,22 @@ void Game::TickMainMenu()
 	mainMenu.Tick();
 }
 
-void Game::RenderGame()
+void Game::TickControllers()
 {
+	list<TankController*>* controllers = TankController::GetAllControllers();
+	list<TankController*>::iterator it = controllers->begin();
+
+	while (it != controllers->end())
+	{
+		(*it)->Tick();
+		it++;
+	}
 }
 
 void Game::TickInGame()
 {
+	TickControllers();
+	Debug::GetReference()->Tick();
 	/*
 	HandlePlayerMovements(PlayerTanks[0]);
 	HandleEnemyUnits(&PlayerTanks);

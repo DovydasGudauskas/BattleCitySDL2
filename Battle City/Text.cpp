@@ -32,11 +32,11 @@ void Text::SetText(std::string text)
 
 	Rendering* rendering = Rendering::GetReference();
 	
-	for (size_t i = 0; i < text.size(); i++)
+	for (int i = 0; i < text.size(); i++)
 	{
 		Sprite letterSprite = rendering->GetLetterTexture(text[i]);
 		SpriteObject* newLetter = new SpriteObject(letterSprite);
-		newLetter->SetPosition(Vector2(i * 8, 0));
+		newLetter->SetPosition(Vector2(i * 8, 0) + position);
 		myLetters.push_back(newLetter);
 	}
 }
@@ -162,7 +162,7 @@ void Page::SetText(std::vector<std::string> btnText)
 {
 	ClearText();
 
-	for (size_t i = 0; i < btnText.size(); i++)
+	for (int i = 0; i < btnText.size(); i++)
 	{
 		Text* newText = new Text(btnText[i]);
 		newText->SetPosition(position + Vector2(0, i * 16));

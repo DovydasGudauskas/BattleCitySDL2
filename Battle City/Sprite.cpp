@@ -72,15 +72,6 @@ void InitializeAllSprites()
 
 Sprite* GetSprite(int colour, int line, int column) { return &tankSprites[colour][line][column]; }
 
-void LoadAllTankSprites()
-{
-	tankSprites.clear();
-	tankSprites.push_back(LoadOneTankMatrix(0, 0));//Yellow
-	tankSprites.push_back(LoadOneTankMatrix(128, 0));//White
-	tankSprites.push_back(LoadOneTankMatrix(0, 128));//Green
-	tankSprites.push_back(LoadOneTankMatrix(128, 128));//Red
-}
-
 vector<vector<Sprite>> LoadOneTankMatrix(int start_x, int start_y)
 {
 	vector<vector<Sprite>> TextureMatrix;

@@ -1,4 +1,8 @@
-#include "Sprite.h";
+#pragma once
+
+#include <Sprite.h>
+#include <SpriteObject.h>
+#include <Vectors.h>
 
 enum class Direction
 {
@@ -7,6 +11,41 @@ enum class Direction
 	Down = 2,
 	Right = 3
 };
+
+class Tank : public CollidableSpriteObject
+{
+public:
+	Tank();
+	Tank(int TankType, int HP, int PlayerType);
+	~Tank();
+
+	void GoDirection(Vector2 direction);
+	void Fire();
+
+	void SetDirection(Direction dir);
+	void FetchNewSprites();
+	void DamageTank(int dmg);
+
+	void Translate(Vector2 vec) override;
+
+	//void SetInvincibleFlag(bool var);
+private:
+	void Die();
+	void Initialize();
+	void SetStatsThroughType();
+	void RefreshSprite();
+
+	bool isDead; //invincible
+	float speed, maxFireCooldown, fireTime, distanceTraveled;
+	int animationState, tankType, hp, playerType;
+
+	Direction lookDirection;
+
+	std::vector<Sprite> tankSprites; // of single HP
+};
+
+/*
+using namespace std;
 
 const double TankSpeed = 0.75;
 const int MaxFireCooldown = 45;
@@ -18,7 +57,7 @@ private:
 public:
 	PlayerTank() :SpriteObject(), playerID(0), hp(1), lookDir(Direction::Up), fireCooldown(0), animationAdd(0) {}
 	PlayerTank(int ID) :SpriteObject(), playerID(ID), hp(1), lookDir(Direction::Up), fireCooldown(0), animationAdd(0) {}
-	PlayerTank(int ID, Sprite* sprite) :SpriteObject(sprite), playerID(ID), hp(1), lookDir(Direction::Up), fireCooldown(0), animationAdd(0) {}
+	PlayerTank(int ID, Sprite sprite) :SpriteObject(sprite), playerID(ID), hp(1), lookDir(Direction::Up), fireCooldown(0), animationAdd(0) {}
 	~PlayerTank() {}
 
 	int GetFacingDirectionAdditive() { return animationAdd; }
@@ -38,7 +77,7 @@ public:
 
 PlayerTank* CreatePlayerTank(int PlayerID)
 {
-	PlayerTank* foo = new PlayerTank(PlayerID,GetSprite(0,0,0));
+	PlayerTank* foo = new PlayerTank(PlayerID, GetSprite(0,0,0));
 	if (PlayerID % 2 == 0) foo->SetPosition(Vector2(151, 208));
 	else foo->SetPosition(Vector2(104, 208));
 	foo->InitializeBoundingBox(13, 13);
@@ -221,3 +260,4 @@ void handleBullet(Bullet* bullet)
 
 	if (bullet->HasBeenHitByABullet() || bullet->CheckIfIsInPlayArea()) bullet->MarkForDeletion();
 }
+*/

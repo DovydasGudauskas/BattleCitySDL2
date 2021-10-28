@@ -148,14 +148,6 @@ void CheckForEmptyObjects()
 	}
 }
 
-void UnloadMemory()// Is esmes tai nieko ypatingo nedaro, taciau kazkodel negaliu normaliai delete [] naudoti...
-{
-	Objects.clear();
-	Enemies.clear();
-	bullets.clear();
-	nonInitializedBullets.clear();
-}
-
 void SpawnNewEnemies()
 {
 	if (Enemies.size() == 0)
@@ -183,31 +175,17 @@ int main(int argc, char* argv[])
 
 	return 0;
 	/*
-	InitializeMap(Tileset, ResScale.x, ResScale.y);
-	LoadMap(0);
-
 	InitializeAllSprites();
 
 	AddPlayer(0);
 
 	for (;;)
 	{
-		SDL_Delay(17);
-		if (GetAsyncKeyState(VK_ESCAPE) && 0x8000) break;
 		HandlePlayerMovements(PlayerTanks[0]);
 		HandleEnemyUnits(&PlayerTanks);
 		HandleCollision();
 		HandleAllBullets();
-		CheckForEmptyObjects();
 		SpawnNewEnemies();
 
-		Render(Renderer, Tileset);
-	}
-
-	UnloadMemory();
-
-	SDL_DestroyRenderer(Renderer);
-	SDL_DestroyWindow(Window);
-	SDL_Quit();
-	return 0;*/
+	}*/
 }

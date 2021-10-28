@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 class Vector2
 {
 public:
@@ -27,4 +29,6 @@ public:
 	double VectorAngle(Vector2 foo);
 
 	double Magnitude();
+
+	std::string toString();
 };

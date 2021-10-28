@@ -71,3 +71,11 @@ double Vector2::Magnitude()
 {
 	return sqrt(x * x + y * y);
 }
+
+std::string Vector2::toString()
+{
+	int X = x;
+	int Y = y;
+
+	return std::to_string(X) + " " + std::to_string(Y);
+}

@@ -23,15 +23,3 @@ public:
 	int GetTextureWidth();
 	int GetTextureHeight();
 };
-
-/*
-//Colour yellow-white-green-red
-//Line 0-7
-//Collum 0-7
-Sprite* GetSprite(int colour, int line, int column);
-Sprite* GetBulletSprite(int dir);
-
-void InitializeAllSprites();
-void LoadAllTankSprites();
-vector<vector<Sprite>> LoadOneTankMatrix(int start_x, int start_y);
-*/

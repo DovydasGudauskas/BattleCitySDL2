@@ -7,6 +7,8 @@
 #include <SpriteObject.h>
 #include <unordered_map>
 
+using namespace std;
+
 class Rendering
 {
 public:
@@ -21,9 +23,10 @@ public:
 	void SetRenderer(SDL_Renderer* renderer);
 	SDL_Renderer* GetRenderer();
 
-	std::vector<Sprite>* GetMapPrefabTiles();
-	std::vector<Sprite>* GetLetterTextures();
+	vector<Sprite>* GetMapPrefabTiles();
+	vector<Sprite>* GetLetterTextures();
 	Sprite GetLetterTexture(char letter);
+	vector<Sprite> GetTankTextures(int tankType, int HP, int playerType);
 
 	void RenderGame();
 	void RenderMainMenu();
@@ -36,15 +39,19 @@ private:
 
 	const Vector2 renderScale = Vector2(4.0, 4.0);
 
-	std::vector<Sprite> mapPrefabTiles;
-	std::vector<SpriteObject*> overlayTextures;
+	vector<Sprite> mapPrefabTiles;
+	vector<SpriteObject*> overlayTextures;
 
-	std::vector<Sprite> lettersData;
-	std::unordered_map<char, size_t> lettersHashmap;
+	vector<Sprite> lettersData;
+	unordered_map<char, size_t> lettersHashmap;
+
+	vector<vector<vector<Sprite>>> tankMatrix;
 
 	void InitializeMapTiles();
 	void InitializeOverlay();
 	void InitializeFont();
+	void InitializeTankTextures();
+	vector<vector<Sprite>> LoadOneTankMatrix(int start_x, int start_y);
 
 	void DrawMapBackground();
 	void RenderAllObjects();
