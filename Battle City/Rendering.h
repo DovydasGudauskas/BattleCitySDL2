@@ -28,8 +28,8 @@ public:
 	Sprite GetLetterTexture(char letter);
 	vector<Sprite> GetTankTextures(int tankType, int HP, int playerType);
 
-	void RenderGame();
-	void RenderMainMenu();
+	void EnableGameOverlay(bool var);
+	void RenderWindow();
 
 private:
 	static Rendering* singleton;
@@ -55,5 +55,4 @@ private:
 
 	void DrawMapBackground();
 	void RenderAllObjects();
-	void RenderMap();
 };

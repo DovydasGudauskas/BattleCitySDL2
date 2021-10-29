@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+using namespace std;
+
 class Text
 {
 public:
@@ -25,6 +27,8 @@ public:
 	void Enable(bool var);
 private:
 	bool enabled;
+
+	string originalText;
 
 	Vector2 position;
 

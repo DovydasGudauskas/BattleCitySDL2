@@ -2,6 +2,7 @@
 #include <list>
 #include <GameMap.h>
 #include <string>
+#include <unordered_map>
 
 Rendering* Rendering::singleton = nullptr;
 
@@ -13,43 +14,25 @@ void Rendering::DrawMapBackground()
 
 void Rendering::RenderAllObjects()
 {
-	list<SpriteObject*> allObjects = SpriteObject::GetAllObjects();
-	list<SpriteObject*>::iterator it = allObjects.begin();
+	unordered_map<int, vector<SpriteObject*>>* layers = SpriteObject::GetAllLayers();
+	unordered_map<int, vector<SpriteObject*>>::iterator it = layers->begin();
 
-	while (it != allObjects.end())
+	while (it != layers->end())
 	{
-		SpriteObject* obj = *it;
+		vector<SpriteObject*> layer = (*it).second;
 
-		// Render object
-		if(obj->IsEnabled())
-			SDL_RenderCopy(mainRenderer, tileset, obj->GetTextureData(), obj->GetRenderData(renderScale));
+		for (size_t i = 0; i < layer.size(); i++)
+		{
+			SpriteObject* object = layer[i];
+			if (object->IsEnabled())
+				SDL_RenderCopy(mainRenderer, tileset, object->GetTextureData(), object->GetRenderData(renderScale));
+		}
 
 		it++;
 	}
 }
 
-void Rendering::RenderMap()
-{
-	vector<SpriteObject*>* mapTiles = GameMap::GetReference()->GetMapTiles();
-	for (int i = 0; i < mapTiles->size(); i++)
-		SDL_RenderCopy(mainRenderer, tileset, (*mapTiles)[i]->GetTextureData(), (*mapTiles)[i]->GetRenderData(renderScale));
-
-	for (int i = 0; i < overlayTextures.size(); i++)
-		SDL_RenderCopy(mainRenderer, tileset, overlayTextures[i]->GetTextureData(), overlayTextures[i]->GetRenderData(renderScale));
-}
-
-void Rendering::RenderGame()
-{
-	SDL_RenderClear(mainRenderer);
-
-	DrawMapBackground();
-	RenderAllObjects();
-	//RenderMap();
-
-	SDL_RenderPresent(mainRenderer);
-}
-
-void Rendering::RenderMainMenu()
+void Rendering::RenderWindow()
 {
 	SDL_RenderClear(mainRenderer);
 
@@ -83,9 +66,10 @@ void Rendering::InitializeOverlay()
 
 	for (int i = 0; i < 4; i++)
 	{
-		overlayTextures[i] = new SpriteObject(mapPrefabTiles[5], false);
+		overlayTextures[i] = new SpriteObject(mapPrefabTiles[5], layerType::Overlay);
 		overlayTextures[i]->SetPosition(Positions[i]);
 		overlayTextures[i]->SetScale(Scales[i]);
+		overlayTextures[i]->EnableRendering(false);
 	}
 }
 
@@ -233,4 +217,10 @@ Sprite Rendering::GetLetterTexture(char letter)
 		return Sprite();
 
 	return lettersData[lettersHashmap[letter]];
+}
+
+void Rendering::EnableGameOverlay(bool var)
+{
+	for (size_t i = 0; i < overlayTextures.size(); i++)
+		overlayTextures[i]->EnableRendering(var);
 }

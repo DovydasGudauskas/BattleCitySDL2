@@ -4,13 +4,33 @@
 #include <Vectors.h>
 #include <Sprite.h>
 #include <list>
+#include <unordered_map>
+
+using namespace std;
+
+namespace layerType
+{
+	enum LayerType
+	{
+		Background = -1,
+		Default = 0,
+		MapTiles = 1,
+		Overlay = 2,
+		Text = 3
+	};
+}
 
 class SpriteObject
 {
 private:
-	static std::list<SpriteObject*> allObjects;
+	static vector<SpriteObject*> allObjects;
+	static unordered_map<int, vector<SpriteObject*>> objectLayers;
+
 	bool renderingEnabled;
 	Vector2 oldPosition;
+
+	int layer;
+	void Initialize(int Layer);
 
 protected:
 	Sprite sprite;
@@ -22,10 +42,11 @@ protected:
 public:
 	SpriteObject();
 	SpriteObject(Sprite Sprite);
-	SpriteObject(Sprite Sprite, bool addToList);
+	SpriteObject(Sprite Sprite, int layer);
 	~SpriteObject();
 
-	static std::list<SpriteObject*> GetAllObjects();
+	static vector<SpriteObject*> GetAllObjects();
+	static unordered_map<int, vector<SpriteObject*>>* GetAllLayers();
 
 	void EnableRendering(bool var);
 

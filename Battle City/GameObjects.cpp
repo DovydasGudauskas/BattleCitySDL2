@@ -153,7 +153,7 @@ const float tankDistAnimChange = 1;
 void Tank::Translate(Vector2 vec)
 {
 	SpriteObject::Translate(vec);
-	distanceTraveled += vec.Magnitude();
+	distanceTraveled += (float)vec.Magnitude();
 
 	if (distanceTraveled > tankDistAnimChange)
 	{

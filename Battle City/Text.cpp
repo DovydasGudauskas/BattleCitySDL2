@@ -3,6 +3,7 @@
 
 Text::Text() :position(Vector2()), enabled(true)
 {
+	originalText = "";
 }
 
 Text::Text(std::string text) :position(Vector2()), enabled(true)
@@ -28,6 +29,11 @@ Text::~Text()
 
 void Text::SetText(std::string text)
 {
+	if (originalText == text)
+		return;
+
+	originalText = text;
+
 	ClearText();
 
 	Rendering* rendering = Rendering::GetReference();
@@ -35,7 +41,7 @@ void Text::SetText(std::string text)
 	for (int i = 0; i < text.size(); i++)
 	{
 		Sprite letterSprite = rendering->GetLetterTexture(text[i]);
-		SpriteObject* newLetter = new SpriteObject(letterSprite);
+		SpriteObject* newLetter = new SpriteObject(letterSprite, layerType::Text);
 		newLetter->SetPosition(Vector2(i * 8, 0) + position);
 		myLetters.push_back(newLetter);
 	}

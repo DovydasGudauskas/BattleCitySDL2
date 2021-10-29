@@ -10,7 +10,7 @@ enum class GameState
 	InGame
 };
 
-const Vector2 playerSpawnPoints[] = { Vector2(0,0), Vector2(0,0) };
+const Vector2 playerSpawnPoints[] = { Vector2(150,205), Vector2(87,205) };
 const Vector2 enemySpawnPoints[] = { Vector2(0,0), Vector2(0,0), Vector2(0,0) };
 
 class Game

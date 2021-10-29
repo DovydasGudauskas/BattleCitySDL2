@@ -56,36 +56,6 @@ int Sprite::GetTextureHeight()
 }
 
 /*
-
-using namespace std;
-
-vector<vector<vector<Sprite>>> tankSprites = vector<vector<vector<Sprite>>>();
-vector<Sprite> bulletSprites = vector<Sprite>();
-
-void LoadBulletSprites();
-
-void InitializeAllSprites()
-{
-	LoadAllTankSprites();
-	LoadBulletSprites();
-}
-
-Sprite* GetSprite(int colour, int line, int column) { return &tankSprites[colour][line][column]; }
-
-vector<vector<Sprite>> LoadOneTankMatrix(int start_x, int start_y)
-{
-	vector<vector<Sprite>> TextureMatrix;
-	for (uint8_t y = 0; y < 128; y += 16)
-	{
-		vector<Sprite> TextureLine;
-		for (uint8_t x = 0; x < 128; x += 16) TextureLine.push_back(Sprite(Vector2((double)x + start_x, (double)y + start_y), 16, 16));
-		TextureMatrix.push_back(TextureLine);
-	}
-	return TextureMatrix;
-}
-
-Sprite* GetBulletSprite(int dir) { return &bulletSprites[dir]; }
-
 void LoadBulletSprites()
 {
 	double x = 320;

@@ -57,6 +57,7 @@ void Game::StartGame()
 void Game::StartNewGame(int mode)
 {
 	currentGameState = GameState::InGame;
+	Rendering::GetReference()->EnableGameOverlay(true);
 	mainMenu.Enable(false);
 	LoadLevel(0);
 }
@@ -105,11 +106,8 @@ void Game::TickInGame()
 	TickControllers();
 	Debug::GetReference()->Tick();
 	/*
-	HandlePlayerMovements(PlayerTanks[0]);
-	HandleEnemyUnits(&PlayerTanks);
 	HandleCollision();
 	HandleAllBullets();
-	CheckForEmptyObjects();
 	SpawnNewEnemies();	*/
 }
 
@@ -132,17 +130,17 @@ void Game::StartTicking()
 		{
 		case GameState::MainMenu:
 			TickMainMenu();
-			Rendering::GetReference()->RenderMainMenu();
 			break;
 
 		case GameState::InGame:
 			TickInGame();
-			Rendering::GetReference()->RenderGame();
 			break;
 
 		default:
 			break;
 		}	
+
+		Rendering::GetReference()->RenderWindow();
 	}
 
 	QuitGame();

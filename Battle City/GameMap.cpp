@@ -39,7 +39,7 @@ void GameMap::AddNewTile(char* tileRead, int posX, int posY, vector<Sprite>* til
 		return;
 
 	Sprite* sprite = &tiles->at(whichTile);
-	SpriteObject* foo = new SpriteObject(*sprite);
+	SpriteObject* foo = new SpriteObject(*sprite, layerType::MapTiles);
 
 	double X = posX, Y = posY;
 

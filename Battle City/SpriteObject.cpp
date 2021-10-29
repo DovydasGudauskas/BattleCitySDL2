@@ -1,44 +1,58 @@
 #include <SpriteObject.h>
 #include <Rendering.h>
 
-std::list<SpriteObject*> SpriteObject::allObjects = std::list<SpriteObject*>();
+vector<SpriteObject*> SpriteObject::allObjects = vector<SpriteObject*>();
+unordered_map<int, vector<SpriteObject*>> SpriteObject::objectLayers = unordered_map<int, vector<SpriteObject*>>();
 
-SpriteObject::SpriteObject() : sprite(Sprite()), position(.0, .0), objectScale(1.0, 1.0), markedForDeletion(false), renderingEnabled(true)
+void SpriteObject::Initialize(int Layer)
 {
 	oldPosition = position;
 
 	tempRenderData = SDL_Rect();
+
+	renderingEnabled = true;
+	markedForDeletion = false;
+
+	objectScale = Vector2(1, 1);
+	position = Vector2(0, 0);
 
 	allObjects.push_back(this);
+
+	layer = Layer;
+	objectLayers[layer].push_back(this);
 }
 
-SpriteObject::SpriteObject(Sprite Sprite) : sprite(Sprite), position(.0, .0), objectScale(1.0, 1.0), markedForDeletion(false), renderingEnabled(true)
+SpriteObject::SpriteObject() : sprite(Sprite())
 {
-	oldPosition = position;
-
-	tempRenderData = SDL_Rect();
-
-	allObjects.push_back(this);
+	Initialize(0);
 }
 
-SpriteObject::SpriteObject(Sprite Sprite, bool addToList) : sprite(Sprite), position(.0, .0), objectScale(1.0, 1.0), markedForDeletion(false), renderingEnabled(true)
+SpriteObject::SpriteObject(Sprite Sprite) : sprite(Sprite)
 {
-	oldPosition = position;
+	Initialize(0);
+}
 
-	tempRenderData = SDL_Rect();
-
-	if(addToList)
-		allObjects.push_back(this);
+SpriteObject::SpriteObject(Sprite Sprite, int Layer) : sprite(Sprite)
+{
+	Initialize(Layer);
 }
 
 SpriteObject::~SpriteObject()
 {
-	allObjects.remove(this);
+	allObjects.erase(remove(allObjects.begin(), allObjects.end(), this));
+	
+	vector<SpriteObject*>* myLayer = &objectLayers[layer];
+	myLayer->erase(remove(myLayer->begin(), myLayer->end(), this));
 }
 
-std::list<SpriteObject*> SpriteObject::GetAllObjects()
+vector<SpriteObject*> SpriteObject::GetAllObjects()
 {
 	return allObjects;
+}
+
+unordered_map<int, vector<SpriteObject*>>* SpriteObject::GetAllLayers()
+{
+	return &objectLayers;
 }
 
 void SpriteObject::EnableRendering(bool var)
