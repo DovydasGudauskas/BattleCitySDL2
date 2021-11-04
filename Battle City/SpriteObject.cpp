@@ -193,8 +193,6 @@ void CollidableSpriteObject::Initialize()
 {
 	allCollidables.push_back(this);
 
-	isTrigger = false;
-
 	localCollisionRect = *sprite.GetTextureData();
 	localCollisionRect.x = 0;
 	localCollisionRect.y = 0;
@@ -236,11 +234,6 @@ bool CollidableSpriteObject::IsStatic()
 bool CollidableSpriteObject::IsTrigger()
 {
 	return false;
-}
-
-void CollidableSpriteObject::SetTriggerFlag(bool var)
-{
-	isTrigger = var;
 }
 
 vector<CollidableSpriteObject*>* CollidableSpriteObject::GetAllCollidables()
@@ -298,13 +291,16 @@ bool HasIntersection(SDL_Rect *a, SDL_Rect *b) {
 		(abs(a->y - b->y) * 2 < (a->h + b->h));
 }
 
-void CollidableSpriteObject::CorrectIntersection(CollidableSpriteObject* obj)
+bool CollidableSpriteObject::CorrectIntersection(CollidableSpriteObject* obj)
 {
 	if (this == obj || !HasIntersection(&globalCollisionRect, obj->GetCollisionRect()))
-		return;
+		return false;
 
 	OnCollision();
 	obj->OnCollision();
+
+	if (obj->IsTrigger())
+		return true;
 
 	if (obj->IsStatic()) // object with static
 	{
@@ -315,6 +311,8 @@ void CollidableSpriteObject::CorrectIntersection(CollidableSpriteObject* obj)
 		obj->Translate((obj->GetOldPosition() - obj->GetPosition()) * 0.5);
 		Translate((GetOldPosition() - GetPosition()) * 0.5);
 	}
+
+	return true;
 }
 
 // ***********************************************
@@ -341,5 +339,39 @@ void StaticCollidable::CheckCollision()
 
 bool StaticCollidable::IsStatic()
 {
+	return true;
+}
+
+// ************************************************
+
+bool TriggerCollidable::IsTrigger()
+{
+	return true;
+}
+
+TriggerCollidable::TriggerCollidable()
+{
+}
+
+TriggerCollidable::TriggerCollidable(Sprite Sprite)
+{
+}
+
+TriggerCollidable::TriggerCollidable(Sprite Sprite, int layer)
+{
+}
+
+TriggerCollidable::~TriggerCollidable()
+{
+}
+
+bool TriggerCollidable::CorrectIntersection(CollidableSpriteObject* obj)
+{
+	if (this == obj || !HasIntersection(&globalCollisionRect, obj->GetCollisionRect()))
+		return false;
+
+	OnCollision();
+	obj->OnCollision();
+
 	return true;
 }

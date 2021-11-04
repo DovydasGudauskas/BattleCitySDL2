@@ -104,9 +104,7 @@ public:
 
 	virtual void CheckCollision();
 	virtual bool IsStatic();
-	bool IsTrigger();
-
-	void SetTriggerFlag(bool var);
+	virtual bool IsTrigger();
 
 	static vector<CollidableSpriteObject*>* GetAllCollidables();
 
@@ -119,15 +117,13 @@ public:
 
 	SDL_Rect* GetCollisionRect();
 	SDL_Rect* GetLocalCollisionRect();
-private:
+protected:
 	SDL_Rect localCollisionRect, globalCollisionRect;
-
-	bool isTrigger;
-
+private:
 	static vector<CollidableSpriteObject*> allCollidables;
 
 	void Initialize();
-	void CorrectIntersection(CollidableSpriteObject* obj);
+	virtual bool CorrectIntersection(CollidableSpriteObject* obj);
 	void UpdateGlobalCollisionRect();
 };
 
@@ -143,4 +139,18 @@ public:
 	void CheckCollision() override;
 	bool IsStatic() override;
 private:
+};
+
+class TriggerCollidable : public CollidableSpriteObject
+{
+public:
+	TriggerCollidable();
+	TriggerCollidable(Sprite Sprite);
+	TriggerCollidable(Sprite Sprite, int layer);
+
+	~TriggerCollidable();
+
+	bool IsTrigger() override;
+private:
+	bool CorrectIntersection(CollidableSpriteObject* obj) override;
 };
