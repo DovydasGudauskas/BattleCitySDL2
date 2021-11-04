@@ -5,6 +5,7 @@
 #include <Sprite.h>
 #include <list>
 #include <unordered_map>
+#include <Transform.h>
 
 using namespace std;
 
@@ -16,7 +17,24 @@ namespace layerType
 		Default = 0,
 		MapTiles = 1,
 		Overlay = 2,
-		Text = 3
+		Text = 3,
+		Debug = 4
+	};
+}
+
+namespace anchorPoint
+{
+	enum AnchorPoint
+	{
+		Center = 0,
+		Right,
+		Left,
+		Up,
+		Down,
+		UpRight,
+		DownRight,
+		UpLeft,
+		DownLeft
 	};
 }
 
@@ -32,6 +50,7 @@ private:
 	int layer;
 	void Initialize(int Layer);
 
+	anchorPoint::AnchorPoint spriteAnchor;
 protected:
 	Sprite sprite;
 	SDL_Rect tempRenderData;
@@ -44,6 +63,8 @@ public:
 	SpriteObject(Sprite Sprite);
 	SpriteObject(Sprite Sprite, int layer);
 	~SpriteObject();
+
+	void SetAnchorPoint(anchorPoint::AnchorPoint var);
 
 	static vector<SpriteObject*> GetAllObjects();
 	static unordered_map<int, vector<SpriteObject*>>* GetAllLayers();
@@ -61,7 +82,10 @@ public:
 	Vector2 GetOldPosition();
 
 	SDL_Rect* GetTextureData();
-	SDL_Rect* GetRenderData(Vector2 worldScale);
+	SDL_Rect* GetRenderData();
+	void UpdateRenderData(Vector2 worldScale);
+
+	virtual void OnPositionChange();
 
 	virtual void Translate(Vector2 vec);
 	void SetPosition(Vector2 Position);
@@ -73,15 +97,50 @@ class CollidableSpriteObject : public SpriteObject
 {
 public:
 	CollidableSpriteObject();
-	CollidableSpriteObject(bool staticFlag);
+	CollidableSpriteObject(Sprite Sprite);
+	CollidableSpriteObject(Sprite Sprite, int layer);
+
 	~CollidableSpriteObject();
 
-	void CheckCollision();
-	bool IsStatic();
+	virtual void CheckCollision();
+	virtual bool IsStatic();
+	bool IsTrigger();
+
+	void SetTriggerFlag(bool var);
+
+	static vector<CollidableSpriteObject*>* GetAllCollidables();
+
+	void OnPositionChange() override;
+
+	virtual void OnCollision();
+
+	void SetCollisionOffset(Vector2 vec);
+	void SetCollisionBounds(Vector2 vec);
+
+	SDL_Rect* GetCollisionRect();
+	SDL_Rect* GetLocalCollisionRect();
 private:
-	bool isStatic;
+	SDL_Rect localCollisionRect, globalCollisionRect;
 
-	static std::list<CollidableSpriteObject*> allCollidables;
+	bool isTrigger;
 
+	static vector<CollidableSpriteObject*> allCollidables;
+
+	void Initialize();
 	void CorrectIntersection(CollidableSpriteObject* obj);
+	void UpdateGlobalCollisionRect();
+};
+
+class StaticCollidable : public CollidableSpriteObject
+{
+public:
+	StaticCollidable();
+	StaticCollidable(Sprite Sprite);
+	StaticCollidable(Sprite Sprite, int layer);
+
+	~StaticCollidable();
+
+	void CheckCollision() override;
+	bool IsStatic() override;
+private:
 };

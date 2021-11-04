@@ -4,6 +4,7 @@
 #include <Windows.h>
 #include <Game.h>
 #include <GameMap.h>
+#include <Rendering.h>
 
 void MainMenu::InitializeTitle()
 {
@@ -53,7 +54,13 @@ void MainMenu::InitializeTitle()
 
 void MainMenu::InitializePages()
 {
-	Sprite pointerSprite = Sprite(Vector2(95, 0), 16, 16);
+	Rendering* render = Rendering::GetReference();
+
+	vector<Sprite> pointerTextureLine = render->GetTankTextures(0,0,0);
+
+	vector<Sprite> pointerTextures;
+	pointerTextures.push_back(pointerTextureLine[6]);
+	pointerTextures.push_back(pointerTextureLine[7]);
 
 	std::vector<std::string> pageInfo;
 	pageInfo.push_back("1 player");
@@ -61,7 +68,7 @@ void MainMenu::InitializePages()
 	pageInfo.push_back("construction");
 	pageInfo.push_back("multiplayer");
 	pageInfo.push_back("quit");
-	Page* mainMenu = new Page(pageInfo, pointerSprite);
+	Page* mainMenu = new Page(pageInfo, pointerTextures);
 	mainMenu->SetPosition(Vector2(92, 132));
 	mainMenu->Enable(false);
 	pages.push_back(mainMenu);
@@ -70,7 +77,7 @@ void MainMenu::InitializePages()
 	pageInfo.push_back("host");
 	pageInfo.push_back("join");
 	pageInfo.push_back("back");
-	Page* multiplayer = new Page(pageInfo, pointerSprite);
+	Page* multiplayer = new Page(pageInfo, pointerTextures);
 	multiplayer->SetPosition(Vector2(92, 132));
 	multiplayer->Enable(false);
 	pages.push_back(mainMenu);
@@ -199,7 +206,10 @@ void MainMenu::Tick()
 				switch (selection)
 				{
 				case 0:
-					Game::GetReference()->StartNewGame(0);
+					Game::GetReference()->StartNewGame(GameMode::Singleplayer);
+					break;
+				case 1:
+					Game::GetReference()->StartNewGame(GameMode::LocalMultiplayer);
 					break;
 				case 4:
 					Game::GetReference()->QuitGame();
@@ -208,14 +218,14 @@ void MainMenu::Tick()
 					break;
 				}
 			}
-			else
+			/*else
 			{
 				switch (selection)
 				{
 				default:
 					break;
 				}
-			}
+			}*/
 		}
 
 		previousSpaceState = 1;

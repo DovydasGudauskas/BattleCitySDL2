@@ -10,6 +10,13 @@ enum class GameState
 	InGame
 };
 
+enum class GameMode
+{
+	Singleplayer = 0,
+	LocalMultiplayer,
+	NetworkMultiplayer
+};
+
 const Vector2 playerSpawnPoints[] = { Vector2(150,205), Vector2(87,205) };
 const Vector2 enemySpawnPoints[] = { Vector2(0,0), Vector2(0,0), Vector2(0,0) };
 
@@ -21,7 +28,7 @@ public:
 	~Game();
 
 	void StartGame();
-	void StartNewGame(int mode);
+	void StartNewGame(GameMode mode);
 
 	static Game* GetReference();
 
@@ -31,15 +38,18 @@ private:
 	static Game* singleton;
 
 	GameState currentGameState;
+	GameMode currentGameMode;
 
 	SDL_Window* gameWindow;
 
+	void TickAnimations();
 	void TickControllers();
 	void TickInGame();
 	void TickMainMenu();
+	void TickCollision();
 
 	void StartTicking();
 
 	void LoadLevel(int lvl);
-	void CreateNewPlayer(Vector2 spawnPos);
+	void CreateNewPlayer(int player);
 };

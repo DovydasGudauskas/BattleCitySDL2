@@ -13,12 +13,22 @@ public:
 	~DebugInfo();
 
 	virtual void Tick();
-	void SetDebugPosition(Vector2 pos);
+	virtual void SetDebugPosition(Vector2 pos);
+};
+
+class DebugInfoText : public DebugInfo
+{
+public:
+	DebugInfoText();
+	~DebugInfoText();
+
+	void Tick() override;
+	void SetDebugPosition(Vector2 pos) override;
 protected:
 	Text* debugText;
 };
 
-class TankDebug : public DebugInfo
+class TankDebug : public DebugInfoText
 {
 public:
 	TankDebug();
@@ -31,6 +41,19 @@ private:
 	Tank* myDebugTank;
 };
 
+class CollisionBoxDebug : public DebugInfo
+{
+public:
+	CollisionBoxDebug(CollidableSpriteObject* spriteObj);
+	~CollisionBoxDebug();
+
+	void Tick() override;
+	void SetTrackObject(CollidableSpriteObject* spriteObj);
+private:
+	SpriteObject* myBox;
+	CollidableSpriteObject* myObj;
+};
+
 class Debug
 {
 public:
@@ -40,6 +63,8 @@ public:
 
 	void DebugTank(Tank* tank);
 	void DebugTank(Tank* tank, Vector2 textPos);
+
+	void DebugCollision(CollidableSpriteObject* tank);
 
 	void Tick();
 private:

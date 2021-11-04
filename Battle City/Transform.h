@@ -1,12 +1,24 @@
-#include "Vectors.h"
+#pragma once
+
+#include <Vectors.h>
 
 class Transform
 {
 public:
-	Vector2 position, scale;
+	Transform();
+	Transform(Vector2 pos);
+	Transform(Vector2 pos, Vector2 objectScale);
+	~Transform();
 
-	Transform() :position(0., 0.), scale(1., 1.) {}
-	Transform(Vector2 Position) :position(Position), scale(1., 1.) {}
-	Transform(Vector2 Position, Vector2 Scale) :position(Position), scale(Scale) {}
-	~Transform() {}
+	Vector2 GetPosition();
+	Vector2 GetOldPosition();
+
+	virtual void OnPositionChange();
+
+	virtual void Translate(Vector2 vec);
+	void SetPosition(Vector2 Position);
+protected:
+	Vector2 position, scale;
+private:
+	Vector2 oldPosition;
 };

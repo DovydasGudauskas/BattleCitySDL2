@@ -81,6 +81,11 @@ void Text::Enable(bool var)
 		myLetters[i]->EnableRendering(enabled);
 }
 
+bool Text::IsEnabled()
+{
+	return enabled;
+}
+
 void Text::ClearText()
 {
 	for (size_t i = 0; i < myLetters.size(); i++)
@@ -94,20 +99,18 @@ void Text::ClearText()
 Page::Page() : currentSelection(0), position(Vector2())
 {
 	InitializePointer();
-	SetPointerTexture(Sprite());
 }
 
 Page::Page(std::vector<std::string> btnText) : currentSelection(0), position(Vector2())
 {
 	InitializePointer();
-	SetPointerTexture(Sprite());
 	SetText(btnText);
 }
 
-Page::Page(std::vector<std::string> btnText, Sprite pointerTexture) : currentSelection(0), position(Vector2())
+Page::Page(std::vector<std::string> btnText, vector<Sprite> pointerTextures) : currentSelection(0), position(Vector2())
 {
 	InitializePointer();
-	SetPointerTexture(pointerTexture);
+	SetPointerTextures(pointerTextures);
 	SetText(btnText);
 }
 
@@ -120,7 +123,7 @@ void Page::Enable(bool var)
 	for (size_t i = 0; i < text.size(); i++)
 		text[i]->Enable(var);
 
-	pointer->EnableRendering(var);
+	pointer.EnableRendering(var);
 }
 
 void Page::GoUp()
@@ -133,7 +136,7 @@ void Page::GoUp()
 
 void Page::GoDown()
 {
-	if (currentSelection + 1 >= text.size())
+	if (currentSelection + (size_t)1 >= text.size())
 		return;
 
 	SetPointerPosition(currentSelection + 1);
@@ -143,9 +146,9 @@ void Page::SetPointerPosition(int which)
 {
 	currentSelection = which;
 	
-	Vector2 pos = pointer->GetPosition();
+	Vector2 pos = pointer.GetPosition();
 	pos.y = text[which]->GetPosition().y;
-	pointer->SetPosition(pos);
+	pointer.SetPosition(pos);
 }
 
 int Page::GetCurrentSelection()
@@ -153,15 +156,15 @@ int Page::GetCurrentSelection()
 	return currentSelection;
 }
 
-void Page::SetPointerTexture(Sprite texture)
+void Page::SetPointerTextures(vector<Sprite> textures)
 {
-	pointer->SetSprite(texture);
+	pointer.LoadAnimFrames(textures);
 }
 
 void Page::InitializePointer()
 {
-	pointer = new SpriteObject(Sprite());
-	pointer->SetPosition(Vector2(-16, 0));
+	pointer = Animation(5);
+	pointer.SetPosition(Vector2(-16, 0));
 }
 
 void Page::SetText(std::vector<std::string> btnText)
@@ -193,7 +196,7 @@ void Page::SetPosition(Vector2 pos)
 	for (size_t i = 0; i < text.size(); i++)
 		text[i]->Translate(translationPos);
 
-	pointer->Translate(translationPos);
+	pointer.Translate(translationPos);
 }
 
 void Page::Translate(Vector2 pos)
@@ -203,7 +206,7 @@ void Page::Translate(Vector2 pos)
 	for (size_t i = 0; i < text.size(); i++)
 		text[i]->Translate(pos);
 
-	pointer->Translate(pos);
+	pointer.Translate(pos);
 }
 
 Vector2 Page::GetPosition()

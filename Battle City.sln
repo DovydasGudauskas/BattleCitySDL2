@@ -19,8 +19,8 @@ Global
 		{FCAB8A23-68D3-46BE-89D5-B447FCB49937}.Debug|x86.Build.0 = Debug|x64
 		{FCAB8A23-68D3-46BE-89D5-B447FCB49937}.Release|x64.ActiveCfg = Release|x64
 		{FCAB8A23-68D3-46BE-89D5-B447FCB49937}.Release|x64.Build.0 = Release|x64
-		{FCAB8A23-68D3-46BE-89D5-B447FCB49937}.Release|x86.ActiveCfg = Release|Win32
-		{FCAB8A23-68D3-46BE-89D5-B447FCB49937}.Release|x86.Build.0 = Release|Win32
+		{FCAB8A23-68D3-46BE-89D5-B447FCB49937}.Release|x86.ActiveCfg = Release|x64
+		{FCAB8A23-68D3-46BE-89D5-B447FCB49937}.Release|x86.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

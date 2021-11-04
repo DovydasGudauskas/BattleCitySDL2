@@ -79,7 +79,7 @@
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LinkIncremental>false</LinkIncremental>
+    <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -136,15 +136,19 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>D:\Users\dovyasf\Desktop\VS_Projects\Battle City SDL2\BattleCitySDL2\SDL2-2.0.10\include;D:\Users\dovyasf\Desktop\VS_Projects\Battle City SDL2\BattleCitySDL2\Battle City;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>D:\Users\dovyasf\Desktop\VS_Projects\Battle City SDL2\BattleCitySDL2\SDL2-2.0.10\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Controllers.cpp" />
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -156,6 +160,7 @@
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="SpriteObject.cpp" />
     <ClCompile Include="Text.cpp" />
+    <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Vectors.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -164,6 +169,7 @@
     <Image Include="Tileset.bmp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Animation.h" />
     <ClInclude Include="Controllers.h" />
     <ClInclude Include="Debug.h" />
     <ClInclude Include="Game.h" />
@@ -174,11 +180,8 @@
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="SpriteObject.h" />
     <ClInclude Include="Text.h" />
+    <ClInclude Include="Transform.h" />
     <ClInclude Include="Vectors.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram.cd" />
-    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

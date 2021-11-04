@@ -6,10 +6,11 @@
 
 #include <GameMap.h>
 #include <Debug.h>
+#include <Animation.h>
 
 Game* Game::singleton = nullptr;
 
-Game::Game():gameWindow(nullptr), currentGameState(GameState::MainMenu), mainMenu(MainMenu())
+Game::Game():gameWindow(nullptr), currentGameState(GameState::MainMenu), currentGameMode(GameMode::Singleplayer), mainMenu(MainMenu())
 {
 	if (singleton == nullptr)
 		singleton = this;
@@ -49,16 +50,17 @@ void Game::StartGame()
 	rendering->SetTileset(SDL_CreateTextureFromSurface(mainRenderer, Surface));
 	SDL_FreeSurface(Surface);
 
-	//InitializeAllSprites();
-
 	StartTicking();
 }
 
-void Game::StartNewGame(int mode)
+void Game::StartNewGame(GameMode mode)
 {
 	currentGameState = GameState::InGame;
+	currentGameMode = mode;
+
 	Rendering::GetReference()->EnableGameOverlay(true);
 	mainMenu.Enable(false);
+
 	LoadLevel(0);
 }
 
@@ -68,25 +70,59 @@ void Game::LoadLevel(int lvl)
 {
 	GameMap::GetReference()->LoadMap(0);
 
-	CreateNewPlayer(playerSpawnPoints[0]);
-
+	switch (currentGameMode)
+	{
+	case GameMode::Singleplayer:
+		CreateNewPlayer(0);
+		break;
+	case GameMode::LocalMultiplayer:
+		CreateNewPlayer(0);
+		CreateNewPlayer(1);
+		break;
+	case GameMode::NetworkMultiplayer:
+		CreateNewPlayer(0);
+		break;
+	default:
+		break;
+	}
 	temp = new Text();
 	temp->SetPosition(Vector2(4, 220));
 }
 
-void Game::CreateNewPlayer(Vector2 spawnPos)
+void Game::CreateNewPlayer(int player)
 {
-	Tank* playerTank = new Tank(0, 1, 0);
+	if (player > 1 || player < 0)
+		return;
 
-	PlayerController* player = new PlayerController();
-	player->SetControlTank(playerTank);
+	Tank* playerTank = new Tank(0, 1, player);
+	playerTank->SetPosition(playerSpawnPoints[player]);
+	//Debug::GetReference()->DebugCollision(playerTank);
 
-	Debug::GetReference()->DebugTank(playerTank, Vector2(4, 220));
+	if (player == 1)
+	{
+		PlayerControllerKeymapping newKeymap;
+		newKeymap.up = VK_UP;
+		newKeymap.right = VK_RIGHT;
+		newKeymap.down = VK_DOWN;
+		newKeymap.left = VK_LEFT;
+		newKeymap.fire = VK_NUMPAD0;
+
+		PlayerController* player = new PlayerController(newKeymap);
+		player->SetControlTank(playerTank);
+	}
+	else
+	{
+		PlayerController* player = new PlayerController();
+		player->SetControlTank(playerTank);
+	}
+
+	//Debug::GetReference()->DebugTank(playerTank, playerSpawnPoints[player]);
 }
 
 void Game::TickMainMenu()
 {
 	mainMenu.Tick();
+	TickAnimations();
 }
 
 void Game::TickControllers()
@@ -101,12 +137,30 @@ void Game::TickControllers()
 	}
 }
 
+void Game::TickCollision()
+{
+	vector<CollidableSpriteObject*>* colls = CollidableSpriteObject::GetAllCollidables();
+
+	for (size_t i = 0; i < colls->size(); i++)
+		colls->at(i)->CheckCollision();
+}
+
+void Game::TickAnimations()
+{
+	vector<Animation*>* anims = Animation::GetAllAnimations();
+
+	for (size_t i = 0; i < anims->size(); i++)
+		anims->at(i)->Tick();
+}
+
 void Game::TickInGame()
 {
 	TickControllers();
+	TickCollision();
 	Debug::GetReference()->Tick();
+	TickAnimations();
+
 	/*
-	HandleCollision();
 	HandleAllBullets();
 	SpawnNewEnemies();	*/
 }
@@ -148,8 +202,6 @@ void Game::StartTicking()
 
 void Game::QuitGame()
 {
-	//UnloadMemory();
-
 	SDL_Renderer* renderer = Rendering::GetReference()->GetRenderer();
 
 	if(renderer != nullptr)

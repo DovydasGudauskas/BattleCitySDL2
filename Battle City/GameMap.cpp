@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include <fstream>
 #include <Rendering.h>
+#include <Debug.h>
 
 GameMap* GameMap::singleton = nullptr;
 
@@ -26,7 +27,7 @@ GameMap* GameMap::GetReference()
 	return singleton;
 }
 
-std::vector<SpriteObject*>* GameMap::GetMapTiles()
+std::vector<StaticCollidable*>* GameMap::GetMapTiles()
 {
 	return &MapTiles;
 }
@@ -39,7 +40,8 @@ void GameMap::AddNewTile(char* tileRead, int posX, int posY, vector<Sprite>* til
 		return;
 
 	Sprite* sprite = &tiles->at(whichTile);
-	SpriteObject* foo = new SpriteObject(*sprite, layerType::MapTiles);
+	StaticCollidable* foo = new StaticCollidable(*sprite, layerType::MapTiles);
+	//Debug::GetReference()->DebugCollision(foo);
 
 	double X = posX, Y = posY;
 

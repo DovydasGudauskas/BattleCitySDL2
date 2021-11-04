@@ -1,21 +1,19 @@
 #include "Debug.h"
 
-DebugInfo::DebugInfo():debugText(new Text())
+DebugInfo::DebugInfo()
 {
 }
 
 DebugInfo::~DebugInfo()
 {
-	delete debugText;
 }
 
-void DebugInfo::Tick()
+void DebugInfo::Tick() // virtual
 {
 }
 
 void DebugInfo::SetDebugPosition(Vector2 pos)
 {
-	debugText->SetPosition(pos);
 }
 
 // *********************************************
@@ -37,9 +35,9 @@ TankDebug::~TankDebug()
 {
 }
 
-void TankDebug::Tick()
+void TankDebug::Tick() // override DebugInfoText
 {
-	DebugInfo::Tick();
+	DebugInfoText::Tick();
 
 	if (myDebugTank == nullptr)
 		return;
@@ -77,6 +75,12 @@ void Debug::DebugTank(Tank* tank, Vector2 textPos)
 	debugs.push_back(db);
 }
 
+void Debug::DebugCollision(CollidableSpriteObject* var)
+{
+	CollisionBoxDebug* db = new CollisionBoxDebug(var);
+	debugs.push_back(db);
+}
+
 void Debug::Tick()
 {
 	for (size_t i = 0; i < debugs.size(); i++)
@@ -91,4 +95,63 @@ Debug::Debug()
 Debug::~Debug()
 {
 	ClearAllDebugs();
+}
+
+// **************************************
+
+DebugInfoText::DebugInfoText() :debugText(new Text())
+{
+}
+
+DebugInfoText::~DebugInfoText()
+{
+	delete debugText;
+}
+
+void DebugInfoText::Tick() // Override DebugInfo
+{
+	DebugInfo::Tick();
+}
+
+void DebugInfoText::SetDebugPosition(Vector2 pos) // Override DebugInfo
+{
+	debugText->SetPosition(pos);
+}
+
+// *************************************
+
+CollisionBoxDebug::CollisionBoxDebug(CollidableSpriteObject* spriteObj) : myBox(new SpriteObject(Sprite(), layerType::Debug))
+{
+	SetTrackObject(spriteObj);
+}
+
+void CollisionBoxDebug::SetTrackObject(CollidableSpriteObject* spriteObj)
+{
+	myObj = spriteObj;
+
+	SDL_Rect texture = SDL_Rect();
+	texture.x = 9;
+	texture.y = 137;
+	texture.w = 1;
+	texture.h = 1;
+	myBox->SetSprite(texture);
+	myBox->SetPosition(myObj->GetPosition());
+
+	SDL_Rect* colRect = myObj->GetLocalCollisionRect();
+	myBox->SetScale(Vector2(colRect->w, colRect->h));
+}
+
+CollisionBoxDebug::~CollisionBoxDebug()
+{
+	delete myBox;
+}
+
+void CollisionBoxDebug::Tick()
+{
+	DebugInfo::Tick();
+
+	if (myObj == nullptr)
+		return;
+
+	myBox->SetPosition(myObj->GetPosition());
 }

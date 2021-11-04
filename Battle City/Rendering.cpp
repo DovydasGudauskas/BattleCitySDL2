@@ -25,7 +25,7 @@ void Rendering::RenderAllObjects()
 		{
 			SpriteObject* object = layer[i];
 			if (object->IsEnabled())
-				SDL_RenderCopy(mainRenderer, tileset, object->GetTextureData(), object->GetRenderData(renderScale));
+				SDL_RenderCopy(mainRenderer, tileset, object->GetTextureData(), object->GetRenderData());
 		}
 
 		it++;
@@ -70,6 +70,7 @@ void Rendering::InitializeOverlay()
 		overlayTextures[i]->SetPosition(Positions[i]);
 		overlayTextures[i]->SetScale(Scales[i]);
 		overlayTextures[i]->EnableRendering(false);
+		overlayTextures[i]->SetAnchorPoint(anchorPoint::UpLeft);
 	}
 }
 
@@ -128,14 +129,14 @@ std::vector<Sprite> Rendering::GetTankTextures(int tankType, int HP, int playerT
 	switch (playerType)
 	{
 	case 0:
-		return tankMatrix[1][HP-1];
+		return tankMatrix[1][(size_t)HP-1];
 		break;
 	case 1:
-		return tankMatrix[2][HP-1];
+		return tankMatrix[2][(size_t)HP-1];
 		break;
 
 	default:
-		return tankMatrix[HP-1][tankType + 4];
+		return tankMatrix[(size_t)HP-1][(size_t)tankType + 4];
 		break;
 	}
 

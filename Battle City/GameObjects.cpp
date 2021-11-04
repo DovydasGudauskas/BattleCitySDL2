@@ -24,7 +24,10 @@ void Tank::Initialize()
 	lookDirection = Direction::Up;
 	fireTime = 0;
 
+	SetCollisionBounds(Vector2(13,13));
+
 	FetchNewSprites();
+	RefreshSprite();
 }
 
 void Tank::SetStatsThroughType()
@@ -128,7 +131,7 @@ void Tank::SetDirection(Direction dir)
 
 void Tank::RefreshSprite()
 {
-	SetSprite(tankSprites[((int)lookDirection) * 2 + animationState]);
+	SetSprite(tankSprites[((size_t)lookDirection) * 2 + animationState]);
 }
 
 void Tank::FetchNewSprites()

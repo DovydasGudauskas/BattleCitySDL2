@@ -6,6 +6,7 @@ unordered_map<int, vector<SpriteObject*>> SpriteObject::objectLayers = unordered
 
 void SpriteObject::Initialize(int Layer)
 {
+	spriteAnchor = anchorPoint::Center;
 	oldPosition = position;
 
 	tempRenderData = SDL_Rect();
@@ -20,6 +21,8 @@ void SpriteObject::Initialize(int Layer)
 
 	layer = Layer;
 	objectLayers[layer].push_back(this);
+
+	OnPositionChange();
 }
 
 SpriteObject::SpriteObject() : sprite(Sprite())
@@ -43,6 +46,12 @@ SpriteObject::~SpriteObject()
 	
 	vector<SpriteObject*>* myLayer = &objectLayers[layer];
 	myLayer->erase(remove(myLayer->begin(), myLayer->end(), this));
+}
+
+void SpriteObject::SetAnchorPoint(anchorPoint::AnchorPoint var)
+{
+	spriteAnchor = var;
+	UpdateRenderData(Rendering::GetReference()->GetRenderScale());
 }
 
 vector<SpriteObject*> SpriteObject::GetAllObjects()
@@ -78,6 +87,7 @@ void SpriteObject::MarkForDeletion()
 void SpriteObject::SetScale(Vector2 Scale)
 {
 	objectScale = Scale;
+	OnPositionChange();
 }
 
 Vector2 SpriteObject::GetScale()
@@ -100,13 +110,56 @@ SDL_Rect* SpriteObject::GetTextureData()
 	return sprite.GetTextureData();
 }
 
-SDL_Rect* SpriteObject::GetRenderData(Vector2 worldScale)
+void SpriteObject::UpdateRenderData(Vector2 worldScale)
 {
-	tempRenderData.x = (int)((position.x - sprite.GetTextureWidth() * 0.5) * worldScale.x);
-	tempRenderData.y = (int)((position.y - sprite.GetTextureHeight() * 0.5) * worldScale.y);
+	switch (spriteAnchor)
+	{
+	case anchorPoint::Center:
+		tempRenderData.x = (int)((position.x - sprite.GetTextureWidth() * 0.5 * objectScale.x) * worldScale.x);
+		tempRenderData.y = (int)((position.y - sprite.GetTextureHeight() * 0.5 * objectScale.y) * worldScale.y);
+		break;
+
+	case anchorPoint::Right:
+		break;
+
+	case anchorPoint::Left:
+		break;
+
+	case anchorPoint::Up:
+		break;
+
+	case anchorPoint::Down:
+		break;
+
+	case anchorPoint::UpRight:
+		break;
+
+	case anchorPoint::DownRight:
+		break;
+
+	case anchorPoint::UpLeft:
+		tempRenderData.x = (int)((position.x - sprite.GetTextureWidth() * 0.5) * worldScale.x);
+		tempRenderData.y = (int)((position.y - sprite.GetTextureHeight() * 0.5) * worldScale.y);
+		break;
+
+	case anchorPoint::DownLeft:
+		break;
+
+	default:
+		break;
+	}
+
 	tempRenderData.w = (int)(sprite.GetTextureWidth() * worldScale.x * objectScale.x);
 	tempRenderData.h = (int)(sprite.GetTextureHeight() * worldScale.y * objectScale.y);
+}
 
+void SpriteObject::OnPositionChange()
+{
+	UpdateRenderData(Rendering::GetReference()->GetRenderScale());
+}
+
+SDL_Rect* SpriteObject::GetRenderData()
+{
 	return &tempRenderData;
 }
 
@@ -114,88 +167,179 @@ void SpriteObject::Translate(Vector2 vec)
 {
 	oldPosition = position;
 	position += vec;
+
+	OnPositionChange();
 }
 
 void SpriteObject::SetPosition(Vector2 Position)
 {
 	oldPosition = position;
 	position = Position;
+
+	OnPositionChange();
 }
 
 void SpriteObject::SetSprite(Sprite SPRITE)
 {
 	sprite = SPRITE;
+	OnPositionChange();
 }
 
 //***********************************************************************************************
 
-std::list<CollidableSpriteObject*> CollidableSpriteObject::allCollidables = std::list<CollidableSpriteObject*>();
+vector<CollidableSpriteObject*> CollidableSpriteObject::allCollidables = vector<CollidableSpriteObject*>();
 
-CollidableSpriteObject::CollidableSpriteObject():isStatic(false)
+void CollidableSpriteObject::Initialize()
 {
 	allCollidables.push_back(this);
+
+	isTrigger = false;
+
+	localCollisionRect = *sprite.GetTextureData();
+	localCollisionRect.x = 0;
+	localCollisionRect.y = 0;
+
+	UpdateGlobalCollisionRect();
 }
 
-CollidableSpriteObject::CollidableSpriteObject(bool staticFlag)
+CollidableSpriteObject::CollidableSpriteObject()
 {
-	allCollidables.push_back(this);
+	Initialize();
+}
 
-	isStatic = staticFlag;
+CollidableSpriteObject::CollidableSpriteObject(Sprite Sprite) : SpriteObject(Sprite)
+{
+	Initialize();
+}
+
+CollidableSpriteObject::CollidableSpriteObject(Sprite Sprite, int layer) : SpriteObject(Sprite, layer)
+{
+	Initialize();
 }
 
 CollidableSpriteObject::~CollidableSpriteObject()
 {
-	allCollidables.remove(this);
+	allCollidables.erase(remove(allCollidables.begin(), allCollidables.end(),this));
 }
 
 void CollidableSpriteObject::CheckCollision()
 {
-	std::list<CollidableSpriteObject*>::iterator it = allCollidables.begin();
-
-	while (it != allCollidables.end())
-	{
-		CorrectIntersection(*it);
-
-		it++;
-	}
+	for (size_t i = 0; i < allCollidables.size(); i++)
+		CorrectIntersection(allCollidables[i]);
 }
 
 bool CollidableSpriteObject::IsStatic()
 {
-	return isStatic;
+	return false;
+}
+
+bool CollidableSpriteObject::IsTrigger()
+{
+	return false;
+}
+
+void CollidableSpriteObject::SetTriggerFlag(bool var)
+{
+	isTrigger = var;
+}
+
+vector<CollidableSpriteObject*>* CollidableSpriteObject::GetAllCollidables()
+{
+	return &allCollidables;
+}
+
+void CollidableSpriteObject::UpdateGlobalCollisionRect()
+{
+	globalCollisionRect = localCollisionRect;
+
+	globalCollisionRect.w *= (int)objectScale.x;
+	globalCollisionRect.h *= (int)objectScale.y;
+
+	globalCollisionRect.x += (int)position.x;
+	globalCollisionRect.y += (int)position.y;
+}
+
+void CollidableSpriteObject::OnPositionChange() // override SpriteObject
+{
+	SpriteObject::OnPositionChange();
+	UpdateGlobalCollisionRect();
+}
+
+void CollidableSpriteObject::OnCollision()
+{
+}
+
+void CollidableSpriteObject::SetCollisionOffset(Vector2 vec)
+{
+	localCollisionRect.x = (int)vec.x;
+	localCollisionRect.y = (int)vec.y;
+	UpdateGlobalCollisionRect();
+}
+
+void CollidableSpriteObject::SetCollisionBounds(Vector2 vec)
+{
+	localCollisionRect.w = (int)vec.x;
+	localCollisionRect.h = (int)vec.y;
+	UpdateGlobalCollisionRect();
+}
+
+SDL_Rect* CollidableSpriteObject::GetCollisionRect()
+{
+	return &globalCollisionRect;
+}
+
+SDL_Rect* CollidableSpriteObject::GetLocalCollisionRect()
+{
+	return &localCollisionRect;
+}
+
+bool HasIntersection(SDL_Rect *a, SDL_Rect *b) {
+	return (abs(a->x - b->x) * 2 < (a->w + b->w)) &&
+		(abs(a->y - b->y) * 2 < (a->h + b->h));
 }
 
 void CollidableSpriteObject::CorrectIntersection(CollidableSpriteObject* obj)
 {
-	Vector2 renderScale = Rendering::GetReference()->GetRenderScale();
-
-	SDL_Rect result = SDL_Rect();
-	SDL_bool boolRes = SDL_IntersectRect(GetRenderData(renderScale), obj->GetRenderData(renderScale), &result);
-
-	if (!boolRes)
+	if (this == obj || !HasIntersection(&globalCollisionRect, obj->GetCollisionRect()))
 		return;
 
-	if (isStatic)
+	OnCollision();
+	obj->OnCollision();
+
+	if (obj->IsStatic()) // object with static
 	{
-		if (obj->IsStatic()) // static with static
-		{
-			return;
-		}
-		else // static with object
-		{
-			obj->SetPosition(obj->GetOldPosition());
-		}
+		SetPosition(GetOldPosition());
 	}
-	else
+	else // object with object
 	{
-		if (obj->IsStatic()) // object with static
-		{
-			SetPosition(GetOldPosition());
-		}
-		else // object with object
-		{
-			obj->Translate((obj->GetOldPosition() - obj->GetPosition()) * 0.5);
-			Translate((GetOldPosition() - GetPosition()) * 0.5);
-		}
+		obj->Translate((obj->GetOldPosition() - obj->GetPosition()) * 0.5);
+		Translate((GetOldPosition() - GetPosition()) * 0.5);
 	}
+}
+
+// ***********************************************
+
+StaticCollidable::StaticCollidable() : CollidableSpriteObject()
+{
+}
+
+StaticCollidable::StaticCollidable(Sprite Sprite) : CollidableSpriteObject(Sprite)
+{
+}
+
+StaticCollidable::StaticCollidable(Sprite Sprite, int layer) : CollidableSpriteObject(Sprite, layer)
+{
+}
+
+StaticCollidable::~StaticCollidable()
+{
+}
+
+void StaticCollidable::CheckCollision()
+{
+}
+
+bool StaticCollidable::IsStatic()
+{
+	return true;
 }

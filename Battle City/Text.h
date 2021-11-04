@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <vector>
+#include <Animation.h>
 
 using namespace std;
 
@@ -25,6 +26,7 @@ public:
 	void Translate(Vector2 pos);
 
 	void Enable(bool var);
+	bool IsEnabled();
 private:
 	bool enabled;
 
@@ -42,7 +44,7 @@ class Page
 public:
 	Page();
 	Page(std::vector<std::string> btnTex);
-	Page(std::vector<std::string> btnText, Sprite pointerTexture);
+	Page(std::vector<std::string> btnText, vector<Sprite> pointerTextures);
 	~Page();
 
 	void Enable(bool var);
@@ -52,8 +54,8 @@ public:
 
 	int GetCurrentSelection();
 
-	void SetPointerTexture(Sprite texture);
-	void SetText(std::vector<std::string> btnText);
+	void SetPointerTextures(vector<Sprite> textures);
+	void SetText(vector<string> btnText);
 
 	void ClearText();
 
@@ -68,6 +70,6 @@ private:
 
 	int currentSelection;
 
-	SpriteObject* pointer;
+	Animation pointer;
 	std::vector<Text*> text;
 };
