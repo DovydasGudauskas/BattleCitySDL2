@@ -6,6 +6,7 @@
 #include <list>
 #include <unordered_map>
 #include <Transform.h>
+#include <Tick.h>
 
 using namespace std;
 
@@ -38,7 +39,7 @@ namespace anchorPoint
 	};
 }
 
-class SpriteObject
+class SpriteObject : public Tickable
 {
 private:
 	static vector<SpriteObject*> allObjects;
@@ -80,6 +81,7 @@ public:
 	Vector2 GetScale();
 	Vector2 GetPosition();
 	Vector2 GetOldPosition();
+	void SetOldPosition(Vector2 pos);
 
 	SDL_Rect* GetTextureData();
 	SDL_Rect* GetRenderData();
@@ -108,7 +110,11 @@ public:
 
 	static vector<CollidableSpriteObject*>* GetAllCollidables();
 
+	void Tick() override;
 	void OnPositionChange() override;
+	
+	void SetVelocity(Vector2 vel);
+	Vector2 GetVelocity();
 
 	virtual void OnCollision();
 
@@ -119,8 +125,11 @@ public:
 	SDL_Rect* GetLocalCollisionRect();
 protected:
 	SDL_Rect localCollisionRect, globalCollisionRect;
-private:
+	bool IsOutOfBounds();
 	static vector<CollidableSpriteObject*> allCollidables;
+	Vector2 velocity;
+private:
+	virtual bool CheckGameBounds();
 
 	void Initialize();
 	virtual bool CorrectIntersection(CollidableSpriteObject* obj);
@@ -151,6 +160,8 @@ public:
 	~TriggerCollidable();
 
 	bool IsTrigger() override;
+	void CheckCollision() override;
 private:
 	bool CorrectIntersection(CollidableSpriteObject* obj) override;
+	bool CheckGameBounds() override;
 };

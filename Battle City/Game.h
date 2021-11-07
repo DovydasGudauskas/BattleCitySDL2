@@ -34,6 +34,8 @@ public:
 
 	void QuitGame();
 private:
+	bool paused, pressedPause, gameQuit;
+
 	MainMenu mainMenu;
 	static Game* singleton;
 
@@ -43,10 +45,13 @@ private:
 	SDL_Window* gameWindow;
 
 	void TickAnimations();
+	void TickTickables();
 	void TickControllers();
 	void TickInGame();
 	void TickMainMenu();
 	void TickCollision();
+
+	void SpawnPlayers();
 
 	void StartTicking();
 

@@ -3,6 +3,7 @@
 #include <Sprite.h>
 #include <SpriteObject.h>
 #include <Vectors.h>
+#include <Tick.h>
 
 enum class Direction
 {
@@ -28,6 +29,8 @@ public:
 
 	void Translate(Vector2 vec) override;
 
+	void Tick() override;
+
 	//void SetInvincibleFlag(bool var);
 private:
 	void Die();
@@ -42,6 +45,19 @@ private:
 	Direction lookDirection;
 
 	std::vector<Sprite> tankSprites; // of single HP
+};
+
+
+class Bullet : public TriggerCollidable
+{
+public:
+	Bullet(Direction dir, float speed);
+	~Bullet();
+
+	void OnCollision() override;
+private:
+	Direction direction;
+	Vector2 goDir;
 };
 
 /*

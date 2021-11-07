@@ -105,6 +105,11 @@ Vector2 SpriteObject::GetOldPosition()
 	return oldPosition;
 }
 
+void SpriteObject::SetOldPosition(Vector2 pos)
+{
+	oldPosition = pos;
+}
+
 SDL_Rect* SpriteObject::GetTextureData()
 {
 	return sprite.GetTextureData();
@@ -165,6 +170,9 @@ SDL_Rect* SpriteObject::GetRenderData()
 
 void SpriteObject::Translate(Vector2 vec)
 {
+	if (vec == Vector2::zero)
+		return;
+
 	oldPosition = position;
 	position += vec;
 
@@ -173,6 +181,9 @@ void SpriteObject::Translate(Vector2 vec)
 
 void SpriteObject::SetPosition(Vector2 Position)
 {
+	if (Position == position)
+		return;
+
 	oldPosition = position;
 	position = Position;
 
@@ -189,6 +200,24 @@ void SpriteObject::SetSprite(Sprite SPRITE)
 
 vector<CollidableSpriteObject*> CollidableSpriteObject::allCollidables = vector<CollidableSpriteObject*>();
 
+bool CollidableSpriteObject::CheckGameBounds()
+{
+	if (IsOutOfBounds())
+	{
+		OnCollision();
+		SetPosition(GetOldPosition());
+
+		return true;
+	}
+	else
+		return false;
+}
+
+bool CollidableSpriteObject::IsOutOfBounds()
+{
+	return position.x <= 15 || position.x >= 224 || position.y <= 7 || position.y >= 216;
+}
+
 void CollidableSpriteObject::Initialize()
 {
 	allCollidables.push_back(this);
@@ -196,6 +225,8 @@ void CollidableSpriteObject::Initialize()
 	localCollisionRect = *sprite.GetTextureData();
 	localCollisionRect.x = 0;
 	localCollisionRect.y = 0;
+
+	velocity = Vector2::zero;
 
 	UpdateGlobalCollisionRect();
 }
@@ -222,6 +253,8 @@ CollidableSpriteObject::~CollidableSpriteObject()
 
 void CollidableSpriteObject::CheckCollision()
 {
+	CheckGameBounds();
+
 	for (size_t i = 0; i < allCollidables.size(); i++)
 		CorrectIntersection(allCollidables[i]);
 }
@@ -258,8 +291,19 @@ void CollidableSpriteObject::OnPositionChange() // override SpriteObject
 	UpdateGlobalCollisionRect();
 }
 
+void CollidableSpriteObject::Tick() // override SpriteObject
+{
+	SpriteObject::Tick();
+	Translate(velocity); // Move object
+}
+
 void CollidableSpriteObject::OnCollision()
 {
+}
+
+void CollidableSpriteObject::SetVelocity(Vector2 vel)
+{
+	velocity = vel;
 }
 
 void CollidableSpriteObject::SetCollisionOffset(Vector2 vec)
@@ -267,6 +311,11 @@ void CollidableSpriteObject::SetCollisionOffset(Vector2 vec)
 	localCollisionRect.x = (int)vec.x;
 	localCollisionRect.y = (int)vec.y;
 	UpdateGlobalCollisionRect();
+}
+
+Vector2 CollidableSpriteObject::GetVelocity()
+{
+	return velocity;
 }
 
 void CollidableSpriteObject::SetCollisionBounds(Vector2 vec)
@@ -297,19 +346,35 @@ bool CollidableSpriteObject::CorrectIntersection(CollidableSpriteObject* obj)
 		return false;
 
 	OnCollision();
+	
+	if (obj->IsTrigger())
+	{
+		obj->OnCollision();
+		return true;
+	}
+
 	obj->OnCollision();
 
-	if (obj->IsTrigger())
-		return true;
-
-	if (obj->IsStatic()) // object with static
+	if (obj->IsStatic())
 	{
-		SetPosition(GetOldPosition());
+		Translate(-velocity);
+		velocity = Vector2::zero;
 	}
-	else // object with object
+	else
 	{
-		obj->Translate((obj->GetOldPosition() - obj->GetPosition()) * 0.5);
-		Translate((GetOldPosition() - GetPosition()) * 0.5);
+		Vector2 meToObj = obj->GetPosition() - position;
+		if (meToObj.VectorAngle(velocity) * Rad2Deg < 45.)
+		{
+			Translate(-velocity);
+			velocity = Vector2::zero;
+		}
+
+		Vector2 objToMe = -meToObj;
+		if (objToMe.VectorAngle(obj->GetVelocity()) * Rad2Deg < 45.)
+		{
+			obj->Translate(-obj->GetVelocity());
+			obj->SetVelocity(Vector2::zero);
+		}
 	}
 
 	return true;
@@ -365,13 +430,30 @@ TriggerCollidable::~TriggerCollidable()
 {
 }
 
-bool TriggerCollidable::CorrectIntersection(CollidableSpriteObject* obj)
+void TriggerCollidable::CheckCollision()
+{
+	bool collided;
+
+	collided = CheckGameBounds();
+
+	for (size_t i = 0; i < allCollidables.size(); i++)
+		collided = CorrectIntersection(allCollidables[i]) || collided;
+
+	if(collided)
+		OnCollision();
+}
+
+bool TriggerCollidable::CorrectIntersection(CollidableSpriteObject* obj) // override CollidableSpriteObject
 {
 	if (this == obj || !HasIntersection(&globalCollisionRect, obj->GetCollisionRect()))
 		return false;
 
-	OnCollision();
 	obj->OnCollision();
 
 	return true;
+}
+
+bool TriggerCollidable::CheckGameBounds() // override CollidableSpriteObject
+{
+	return IsOutOfBounds();
 }

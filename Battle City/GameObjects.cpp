@@ -96,27 +96,56 @@ void Tank::GoDirection(Vector2 direction)
 	if (direction.x > 0.1f)
 	{
 		SetDirection(Direction::Right);
-		Translate(Vector2(1, 0) * speed);
+		SetVelocity(Vector2(1, 0) * speed);
 	}
 	else if (direction.x < -0.1f)
 	{
 		SetDirection(Direction::Left);
-		Translate(Vector2(-1, 0) * speed);
+		SetVelocity(Vector2(-1, 0) * speed);
 	}
 	else if (direction.y > 0.1f)
 	{
 		SetDirection(Direction::Down);
-		Translate(Vector2(0, 1) * speed);
+		SetVelocity(Vector2(0, 1) * speed);
 	}
 	else if (direction.y < -0.1f)
 	{
 		SetDirection(Direction::Up);
-		Translate(Vector2(0, -1) * speed);
+		SetVelocity(Vector2(0, -1) * speed);
 	}
 }
 
 void Tank::Fire()
 {
+	if (fireTime > 0)
+		return;
+
+	fireTime = maxFireCooldown;
+
+	Bullet* bullet = new Bullet(lookDirection, 2);
+	bullet->SetPosition(position);
+
+	float offset = 8;
+
+	switch (lookDirection)
+	{
+	default:
+	case Direction::Up:
+		bullet->Translate(Vector2(0, -offset));
+		break;
+
+	case Direction::Left:
+		bullet->Translate(Vector2(-offset, 0));
+		break;
+
+	case Direction::Down:
+		bullet->Translate(Vector2(0, offset));
+		break;
+
+	case Direction::Right:
+		bullet->Translate(Vector2(offset, 0));
+		break;
+	}
 }
 
 void Tank::SetDirection(Direction dir)
@@ -170,10 +199,57 @@ void Tank::Translate(Vector2 vec)
 	}
 }
 
+void Tank::Tick() // Override CollidableSpriteObject
+{
+	CollidableSpriteObject::Tick();
+
+	if (fireTime > 0)
+		fireTime -= 1.f / 60.f;
+}
+
 void Tank::Die()
 {
 	if (isDead)
 		return;
 	isDead = true;
 	EnableRendering(false);
+}
+
+// ****************************
+
+Bullet::Bullet(Direction dir, float speed) : direction(dir)
+{
+	switch (dir)
+	{
+	default:
+	case Direction::Up:
+		SetSprite(Sprite(Vector2(320, 0), Vector2(4, 4)));
+		velocity = Vector2(0, -1) * speed;
+		break;
+
+	case Direction::Left:
+		SetSprite(Sprite(Vector2(324, 0), Vector2(4, 4)));
+		velocity = Vector2(-1, 0) * speed;
+		break;
+
+	case Direction::Down:
+		SetSprite(Sprite(Vector2(328, 0), Vector2(4, 4)));
+		velocity = Vector2(0, 1) * speed;
+		break;
+
+	case Direction::Right:
+		SetSprite(Sprite(Vector2(332, 0), Vector2(4, 4)));
+		velocity = Vector2(1, 0) * speed;
+		break;
+	}
+}
+
+Bullet::~Bullet()
+{
+}
+
+void Bullet::OnCollision() // override CollidableSpriteObject
+{
+	CollidableSpriteObject::OnCollision();
+	delete this;
 }

@@ -1,4 +1,5 @@
 #include <Controllers.h>
+#include <Windows.h>
 
 std::list<TankController*> TankController::allControllers = std::list<TankController*>();
 
@@ -67,6 +68,8 @@ void PlayerController::Tick()
 		controlTank->GoDirection(Vector2(1, 0));
 	else if (GetAsyncKeyState(keymap.left))
 		controlTank->GoDirection(Vector2(-1, 0));
+	else
+		controlTank->SetVelocity(Vector2::zero);
 
 	if (GetAsyncKeyState(keymap.fire))
 		controlTank->Fire();

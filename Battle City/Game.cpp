@@ -8,10 +8,19 @@
 #include <Debug.h>
 #include <Animation.h>
 
+//#include <SDL_image.h>
+
 Game* Game::singleton = nullptr;
 
-Game::Game():gameWindow(nullptr), currentGameState(GameState::MainMenu), currentGameMode(GameMode::Singleplayer), mainMenu(MainMenu())
+Game::Game()
 {
+	gameWindow = nullptr;
+	currentGameState = GameState::MainMenu;
+	currentGameMode = GameMode::Singleplayer;
+	paused = false;
+	pressedPause = false;
+	gameQuit = false;
+
 	if (singleton == nullptr)
 		singleton = this;
 }
@@ -47,6 +56,7 @@ void Game::StartGame()
 
 	// Load tileset
 	SDL_Surface* Surface = SDL_LoadBMP("Tileset.bmp");
+	//SDL_Surface* Surface = IMG_Load("Tileset.png");
 	rendering->SetTileset(SDL_CreateTextureFromSurface(mainRenderer, Surface));
 	SDL_FreeSurface(Surface);
 
@@ -64,12 +74,8 @@ void Game::StartNewGame(GameMode mode)
 	LoadLevel(0);
 }
 
-static Text* temp = nullptr;
-
-void Game::LoadLevel(int lvl)
+void Game::SpawnPlayers()
 {
-	GameMap::GetReference()->LoadMap(0);
-
 	switch (currentGameMode)
 	{
 	case GameMode::Singleplayer:
@@ -85,8 +91,13 @@ void Game::LoadLevel(int lvl)
 	default:
 		break;
 	}
-	temp = new Text();
-	temp->SetPosition(Vector2(4, 220));
+}
+
+void Game::LoadLevel(int lvl)
+{
+	GameMap::GetReference()->LoadMap(0);
+
+	SpawnPlayers();
 }
 
 void Game::CreateNewPlayer(int player)
@@ -153,21 +164,30 @@ void Game::TickAnimations()
 		anims->at(i)->Tick();
 }
 
+void Game::TickTickables()
+{
+	vector<Tickable*>* ticks = Tickable::GetAllTicks();
+
+	for (size_t i = 0; i < ticks->size(); i++)
+		ticks->at(i)->Tick();
+}
+
 void Game::TickInGame()
 {
 	TickControllers();
-	TickCollision();
-	Debug::GetReference()->Tick();
 	TickAnimations();
+	TickTickables();
+	TickCollision();
+
+	Debug::GetReference()->Tick();
 
 	/*
-	HandleAllBullets();
 	SpawnNewEnemies();	*/
 }
 
 void Game::StartTicking()
 {
-	while (!GetAsyncKeyState(VK_ESCAPE))
+	while (!gameQuit && !GetAsyncKeyState(VK_ESCAPE))
 	{
 		bool run = true;
 		SDL_Event event;
@@ -177,31 +197,46 @@ void Game::StartTicking()
 		if (!run)
 			break;
 
-
 		SDL_Delay(17);
 
-		switch (currentGameState)
+		if (GetAsyncKeyState('P'))
 		{
-		case GameState::MainMenu:
-			TickMainMenu();
-			break;
+			if(pressedPause != true)
+				paused = !paused;
 
-		case GameState::InGame:
-			TickInGame();
-			break;
+			pressedPause = true;
+		}
+		else
+			pressedPause = false;
 
-		default:
-			break;
-		}	
+		if (!paused)
+		{
+			switch (currentGameState)
+			{
+			case GameState::MainMenu:
+				TickMainMenu();
+				break;
 
-		Rendering::GetReference()->RenderWindow();
+			case GameState::InGame:
+				TickInGame();
+				break;
+
+			default:
+				break;
+			}
+
+			Rendering::GetReference()->RenderWindow();
+		}
 	}
 
-	QuitGame();
+	if(!gameQuit)
+		QuitGame();
 }
 
 void Game::QuitGame()
 {
+	gameQuit = true;
+
 	SDL_Renderer* renderer = Rendering::GetReference()->GetRenderer();
 
 	if(renderer != nullptr)
