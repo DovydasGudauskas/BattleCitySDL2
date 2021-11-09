@@ -60,6 +60,9 @@
     <ClCompile Include="Tick.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="EnemySpawner.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Tileset.bmp">
@@ -69,9 +72,6 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="..\NES_00.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="Tileset.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
@@ -116,6 +116,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Tick.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemySpawner.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

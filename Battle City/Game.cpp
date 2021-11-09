@@ -7,6 +7,7 @@
 #include <GameMap.h>
 #include <Debug.h>
 #include <Animation.h>
+#include <EnemySpawner.h>
 
 //#include <SDL_image.h>
 
@@ -95,9 +96,10 @@ void Game::SpawnPlayers()
 
 void Game::LoadLevel(int lvl)
 {
-	GameMap::GetReference()->LoadMap(0);
+	GameMap::GetReference()->LoadMap(lvl);
 
 	SpawnPlayers();
+	EnemySpawner::GetReference()->StartSpawning(lvl);
 }
 
 void Game::CreateNewPlayer(int player)

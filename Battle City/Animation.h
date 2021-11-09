@@ -4,6 +4,7 @@
 #include <Sprite.h>
 #include <SpriteObject.h>
 #include <vector>
+#include <GameObjects.h>
 
 using namespace std;
 
@@ -35,4 +36,17 @@ private:
 
 	void Initialize();
 	void SetFrame(int frame);
+};
+
+class SpawnAnimation : public Tickable
+{
+public:
+	SpawnAnimation(Tank* tankToSpawn);
+	~SpawnAnimation();
+
+	void Tick() override;
+private:
+	Tank* spawnTank;
+	Animation* myAnim;
+	int ticksLeft;
 };

@@ -50,7 +50,7 @@ private:
 class AIController : public TankController
 {
 public:
-	AIController();
+	AIController(Tank* tankToControl);
 	~AIController();
 
 	void Tick() override;

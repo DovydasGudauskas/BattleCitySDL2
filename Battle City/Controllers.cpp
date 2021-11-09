@@ -77,8 +77,10 @@ void PlayerController::Tick()
 
 // ***********************************
 
-AIController::AIController()
+AIController::AIController(Tank* tankToControl)
 {
+	controlTank = tankToControl;
+	canControlTank = true;
 }
 
 AIController::~AIController()
@@ -87,6 +89,12 @@ AIController::~AIController()
 
 void AIController::Tick()
 {
-	if (!canControlTank || controlTank == nullptr)
+	if (controlTank == nullptr)
+	{
+		delete this;
+		return;
+	}
+
+	if (!controlTank->IsEnabled() || !canControlTank)
 		return;
 }

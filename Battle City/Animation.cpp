@@ -89,3 +89,53 @@ void Animation::OnPositionChange() // override Transform
 	Transform::OnPositionChange();
 	myShowObject.SetPosition(position);
 }
+
+// ******************************************************
+
+SpawnAnimation::SpawnAnimation(Tank* tankToSpawn)
+{
+	spawnTank = tankToSpawn;
+
+	int animSpeed = 5;
+
+	myAnim = new Animation(animSpeed);
+	myAnim->SetPosition(spawnTank->GetPosition());
+	myAnim->EnableRendering(true);
+
+	Sprite one = Sprite(Vector2(258, 19), Vector2(9, 9));
+	Sprite two = Sprite(Vector2(273, 18), Vector2(11, 11));
+	Sprite three = Sprite(Vector2(288, 17), Vector2(13, 13));
+	Sprite four = Sprite(Vector2(303, 16), Vector2(15, 15));
+
+	for (size_t i = 0; i < 3; i++)
+	{
+		myAnim->LoadAnimFrames(one);
+		myAnim->LoadAnimFrames(two);
+		myAnim->LoadAnimFrames(three);
+		myAnim->LoadAnimFrames(four);
+		myAnim->LoadAnimFrames(three);
+		myAnim->LoadAnimFrames(two);
+	}
+	myAnim->LoadAnimFrames(one);
+
+	ticksLeft = 3 * 5 + 1;
+	ticksLeft *= animSpeed;
+}
+
+SpawnAnimation::~SpawnAnimation()
+{
+	delete myAnim;
+}
+
+void SpawnAnimation::Tick()
+{
+	myAnim->Tick();
+
+	if (ticksLeft > 0)
+		ticksLeft--;
+	else
+	{
+		spawnTank->EnableRendering(true);
+		delete this;
+	}
+}

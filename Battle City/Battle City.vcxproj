@@ -154,6 +154,7 @@
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Controllers.cpp" />
     <ClCompile Include="Debug.cpp" />
+    <ClCompile Include="EnemySpawner.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameMap.cpp" />
     <ClCompile Include="GameObjects.cpp" />
@@ -171,12 +172,12 @@
     <Image Include="..\NES_00.bmp" />
     <Image Include="..\NES_01.bmp" />
     <Image Include="Tileset.bmp" />
-    <Image Include="Tileset.png" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h" />
     <ClInclude Include="Controllers.h" />
     <ClInclude Include="Debug.h" />
+    <ClInclude Include="EnemySpawner.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameMap.h" />
     <ClInclude Include="GameObjects.h" />
