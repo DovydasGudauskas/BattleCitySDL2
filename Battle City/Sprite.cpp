@@ -54,16 +54,3 @@ int Sprite::GetTextureHeight()
 {
 	return textureData.h;
 }
-
-/*
-void LoadBulletSprites()
-{
-	double x = 320;
-	for (int i = 0; i < 4; i++)
-	{
-		bulletSprites.push_back(Sprite(Vector2(x,0.), 4,4));
-		x += 4;
-	}
-}
-
-*/

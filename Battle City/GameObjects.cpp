@@ -32,7 +32,7 @@ void Tank::Initialize()
 
 void Tank::SetStatsThroughType()
 {
-	float speedMultiplier = 0.75;
+	float speedMultiplier = 0.7f;
 	float fireRateMultiplier = 1;
 
 	if (playerType >= 0) // PLAYER
@@ -80,7 +80,7 @@ void Tank::SetStatsThroughType()
 			break;
 
 		case 3: // Medium movement, medium speed weapon (can double fire and destroy steel walls)
-			speed = 2 * speedMultiplier;
+			speed = speedMultiplier;
 			maxFireCooldown = 2 * fireRateMultiplier;
 			break;
 		}
@@ -158,9 +158,30 @@ void Tank::SetDirection(Direction dir)
 	RefreshSprite();
 }
 
+Direction Tank::GetDirection()
+{
+	return lookDirection;
+}
+
 void Tank::RefreshSprite()
 {
 	SetSprite(tankSprites[((size_t)lookDirection) * 2 + animationState]);
+}
+
+void Tank::DamageTank()
+{
+	hp--;
+	if (hp <= 0)
+	{
+		hp = 0;
+		isDead = true;
+		EnableRendering(false);
+	}
+}
+
+bool Tank::IsTank()
+{
+	return true;
 }
 
 void Tank::FetchNewSprites()
@@ -248,8 +269,15 @@ Bullet::~Bullet()
 {
 }
 
-void Bullet::OnCollision() // override CollidableSpriteObject
+void Bullet::OnCollision(CollidableSpriteObject* collision) // override CollidableSpriteObject
 {
-	CollidableSpriteObject::OnCollision();
+	CollidableSpriteObject::OnCollision(collision);
+
+	if (collision != nullptr && collision->IsTank())
+	{
+		Tank* tank = (Tank*)collision;
+		tank->DamageTank();
+	}
+
 	delete this;
 }

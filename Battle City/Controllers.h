@@ -55,4 +55,8 @@ public:
 
 	void Tick() override;
 private:
+	Vector2 lastPosition;
+
+	bool ShouldFire(Vector2 targetPos);
+	bool IsStuck();
 };

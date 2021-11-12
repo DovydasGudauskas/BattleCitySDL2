@@ -25,6 +25,7 @@ private:
 
 	void ClearBuffer();
 	void SpawnNextTank();
+	void AddTankToBuffer(int type, int hp);
 
 	EnemySpawner();
 	~EnemySpawner();

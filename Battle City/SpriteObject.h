@@ -116,10 +116,12 @@ public:
 	void SetVelocity(Vector2 vel);
 	Vector2 GetVelocity();
 
-	virtual void OnCollision();
+	virtual void OnCollision(CollidableSpriteObject* collision);
 
 	void SetCollisionOffset(Vector2 vec);
 	void SetCollisionBounds(Vector2 vec);
+
+	virtual bool IsTank();
 
 	SDL_Rect* GetCollisionRect();
 	SDL_Rect* GetLocalCollisionRect();

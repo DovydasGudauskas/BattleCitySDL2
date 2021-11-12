@@ -38,24 +38,30 @@ void EnemySpawner::SpawnNextTank()
 		isSpawning = false;
 }
 
+void EnemySpawner::AddTankToBuffer(int type, int hp)
+{
+	Tank* newTank = new Tank(type, hp, -1);
+
+	newTank->SetPosition(enemySpawnPoints[(int)(spawnBuffer.size() % 3)]);
+	newTank->EnableRendering(false);
+	newTank->SetDirection(Direction::Down);
+
+	AIController* controller = new AIController(newTank);
+
+	spawnBuffer.push_back(newTank);
+}
+
 void EnemySpawner::StartSpawning(int level)
 {
 	isSpawning = true;
 
 	ClearBuffer();
 
+	for (size_t i = 0; i < 8; i++)
+		AddTankToBuffer(0, 1);
+
 	for (size_t i = 0; i < 2; i++)
-	{
-		Tank* newTank = new Tank(3, 4,-1);
-
-		newTank->SetPosition(enemySpawnPoints[(int)(spawnBuffer.size() % 3)]);
-		newTank->EnableRendering(false);
-		newTank->SetDirection(Direction::Down);
-
-		AIController* controller = new AIController(newTank);
-
-		spawnBuffer.push_back(newTank);
-	}
+		AddTankToBuffer(3, 4);
 }
 
 EnemySpawner* EnemySpawner::GetReference()

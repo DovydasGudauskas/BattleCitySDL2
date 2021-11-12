@@ -204,18 +204,27 @@ bool CollidableSpriteObject::CheckGameBounds()
 {
 	if (IsOutOfBounds())
 	{
-		OnCollision();
+		OnCollision(nullptr);
 		SetPosition(GetOldPosition());
 
 		return true;
 	}
-	else
-		return false;
+
+	return false;
 }
 
 bool CollidableSpriteObject::IsOutOfBounds()
 {
-	return position.x <= 15 || position.x >= 224 || position.y <= 7 || position.y >= 216;
+	SDL_Rect* myTexture = GetTextureData();
+	return position.x - myTexture->w / 2. <= 15 
+		|| position.x + myTexture->w / 2. >= 226 
+		|| position.y - myTexture->h / 2. <= 7 
+		|| position.y + myTexture->h / 2. >= 218;
+}
+
+bool CollidableSpriteObject::IsTank()
+{
+	return false;
 }
 
 void CollidableSpriteObject::Initialize()
@@ -253,10 +262,14 @@ CollidableSpriteObject::~CollidableSpriteObject()
 
 void CollidableSpriteObject::CheckCollision()
 {
+	if (!IsEnabled())
+		return;
+
 	CheckGameBounds();
 
 	for (size_t i = 0; i < allCollidables.size(); i++)
-		CorrectIntersection(allCollidables[i]);
+		if(allCollidables[i]->IsEnabled())
+			CorrectIntersection(allCollidables[i]);
 }
 
 bool CollidableSpriteObject::IsStatic()
@@ -297,7 +310,7 @@ void CollidableSpriteObject::Tick() // override SpriteObject
 	Translate(velocity); // Move object
 }
 
-void CollidableSpriteObject::OnCollision()
+void CollidableSpriteObject::OnCollision(CollidableSpriteObject* collision)
 {
 }
 
@@ -345,15 +358,15 @@ bool CollidableSpriteObject::CorrectIntersection(CollidableSpriteObject* obj)
 	if (this == obj || !HasIntersection(&globalCollisionRect, obj->GetCollisionRect()))
 		return false;
 
-	OnCollision();
+	OnCollision(obj);
 	
 	if (obj->IsTrigger())
 	{
-		obj->OnCollision();
+		obj->OnCollision(this);
 		return true;
 	}
 
-	obj->OnCollision();
+	obj->OnCollision(this);
 
 	if (obj->IsStatic())
 	{
@@ -440,7 +453,7 @@ void TriggerCollidable::CheckCollision()
 		collided = CorrectIntersection(allCollidables[i]) || collided;
 
 	if(collided)
-		OnCollision();
+		OnCollision(nullptr);
 }
 
 bool TriggerCollidable::CorrectIntersection(CollidableSpriteObject* obj) // override CollidableSpriteObject
@@ -448,7 +461,7 @@ bool TriggerCollidable::CorrectIntersection(CollidableSpriteObject* obj) // over
 	if (this == obj || !HasIntersection(&globalCollisionRect, obj->GetCollisionRect()))
 		return false;
 
-	obj->OnCollision();
+	obj->OnCollision(this);
 
 	return true;
 }
