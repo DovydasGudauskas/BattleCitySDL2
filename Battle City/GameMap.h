@@ -7,6 +7,27 @@
 
 using namespace std;
 
+enum class MapTileType
+{
+	Brick = 0,
+	Stone,
+	Bush,
+	Ice,
+	Water
+};
+
+class MapTile : public StaticCollidable
+{
+public:
+	MapTile(Sprite sprite, MapTileType tileType);
+	~MapTile();
+
+	FinalObjectType GetFinalObjectType() override;
+	MapTileType GetMapTileType();
+private:
+	MapTileType mapTileType;
+};
+
 class GameMap
 {
 public:
@@ -15,14 +36,14 @@ public:
 
 	static GameMap* GetReference();
 
-	vector<StaticCollidable*>* GetMapTiles();
+	vector<MapTile*>* GetMapTiles();
 
 	void LoadMap(int Level);
 	void ClearMap();
 private:
 	static GameMap* singleton;
 
-	vector<StaticCollidable*> MapTiles;
+	vector<MapTile*> MapTiles;
 
 	void AddNewTile(char* tileRead, int posX, int posY, vector<Sprite>* tiles);
 	void ReadMapLine(string* line, int posY, vector<Sprite>* tiles);

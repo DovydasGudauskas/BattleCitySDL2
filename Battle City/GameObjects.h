@@ -35,7 +35,7 @@ public:
 
 	void DamageTank();
 
-	bool IsTank() override;
+	FinalObjectType GetFinalObjectType() override;
 
 	//void SetInvincibleFlag(bool var);
 private:

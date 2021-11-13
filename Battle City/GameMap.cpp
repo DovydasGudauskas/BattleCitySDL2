@@ -4,6 +4,26 @@
 #include <Rendering.h>
 #include <Debug.h>
 
+MapTile::MapTile(Sprite sprite, MapTileType tileType) : StaticCollidable(sprite, layerType::MapTiles), mapTileType(tileType)
+{
+}
+
+MapTile::~MapTile()
+{
+}
+
+FinalObjectType MapTile::GetFinalObjectType() // override StaticCollidable
+{
+	return FinalObjectType::MapTile;
+}
+
+MapTileType MapTile::GetMapTileType()
+{
+	return mapTileType;
+}
+
+// ***************************************************
+
 GameMap* GameMap::singleton = nullptr;
 
 GameMap::GameMap()
@@ -27,7 +47,7 @@ GameMap* GameMap::GetReference()
 	return singleton;
 }
 
-std::vector<StaticCollidable*>* GameMap::GetMapTiles()
+std::vector<MapTile*>* GameMap::GetMapTiles()
 {
 	return &MapTiles;
 }
@@ -39,15 +59,12 @@ void GameMap::AddNewTile(char* tileRead, int posX, int posY, vector<Sprite>* til
 	if (whichTile == 0 || whichTile >= tiles->size())
 		return;
 
-	Sprite* sprite = &tiles->at(whichTile);
-	StaticCollidable* foo = new StaticCollidable(*sprite, layerType::MapTiles);
+	MapTile* newTile = new MapTile(tiles->at(whichTile), (MapTileType)(whichTile - 1));
+	newTile->SetPosition(Vector2(posX * 8. + 20., posY * 8. + 12.));
+
 	//Debug::GetReference()->DebugCollision(foo);
 
-	double X = posX, Y = posY;
-
-	foo->SetPosition(Vector2(X * 8. + 20., Y * 8. + 12.));
-
-	MapTiles.push_back(foo);
+	MapTiles.push_back(newTile);
 }
 
 void GameMap::ReadMapLine(string* line, int posY, vector<Sprite>* tiles)

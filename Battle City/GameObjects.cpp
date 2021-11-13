@@ -1,5 +1,6 @@
 #include <GameObjects.h>
 #include <Rendering.h>
+#include <GameMap.h>
 
 Tank::Tank()
 {
@@ -179,9 +180,9 @@ void Tank::DamageTank()
 	}
 }
 
-bool Tank::IsTank()
+FinalObjectType Tank::GetFinalObjectType()
 {
-	return true;
+	return FinalObjectType::Tank;
 }
 
 void Tank::FetchNewSprites()
@@ -271,12 +272,33 @@ Bullet::~Bullet()
 
 void Bullet::OnCollision(CollidableSpriteObject* collision) // override CollidableSpriteObject
 {
-	CollidableSpriteObject::OnCollision(collision);
-
-	if (collision != nullptr && collision->IsTank())
+	if (collision != nullptr)
 	{
-		Tank* tank = (Tank*)collision;
-		tank->DamageTank();
+		Tank* tank;
+		MapTile* mapTile;
+		switch (collision->GetFinalObjectType())
+		{
+		case FinalObjectType::Tank:
+			tank = (Tank*)collision;
+			tank->DamageTank();
+			break;
+
+		case FinalObjectType::MapTile:
+			mapTile = (MapTile*)collision;
+			switch (mapTile->GetMapTileType())
+			{
+			case MapTileType::Brick:
+				delete mapTile;
+
+			default:
+				break;
+			}
+			break;
+
+		case FinalObjectType::None:
+		default:
+			break;
+		}
 	}
 
 	delete this;

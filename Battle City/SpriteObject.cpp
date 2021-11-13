@@ -222,9 +222,9 @@ bool CollidableSpriteObject::IsOutOfBounds()
 		|| position.y + myTexture->h / 2. >= 218;
 }
 
-bool CollidableSpriteObject::IsTank()
+FinalObjectType CollidableSpriteObject::GetFinalObjectType()
 {
-	return false;
+	return FinalObjectType::None;
 }
 
 void CollidableSpriteObject::Initialize()
@@ -446,14 +446,19 @@ TriggerCollidable::~TriggerCollidable()
 void TriggerCollidable::CheckCollision()
 {
 	bool collided;
+	CollidableSpriteObject* lastCollision = nullptr;
 
 	collided = CheckGameBounds();
 
 	for (size_t i = 0; i < allCollidables.size(); i++)
-		collided = CorrectIntersection(allCollidables[i]) || collided;
+		if (CorrectIntersection(allCollidables[i]))
+		{
+			collided = true;
+			lastCollision = allCollidables[i];
+		}
 
 	if(collided)
-		OnCollision(nullptr);
+		OnCollision(lastCollision);
 }
 
 bool TriggerCollidable::CorrectIntersection(CollidableSpriteObject* obj) // override CollidableSpriteObject

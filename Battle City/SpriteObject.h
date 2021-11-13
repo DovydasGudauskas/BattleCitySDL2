@@ -39,6 +39,13 @@ namespace anchorPoint
 	};
 }
 
+enum class FinalObjectType
+{
+	None = 0,
+	Tank,
+	MapTile
+};
+
 class SpriteObject : public Tickable
 {
 private:
@@ -121,7 +128,7 @@ public:
 	void SetCollisionOffset(Vector2 vec);
 	void SetCollisionBounds(Vector2 vec);
 
-	virtual bool IsTank();
+	virtual FinalObjectType GetFinalObjectType();
 
 	SDL_Rect* GetCollisionRect();
 	SDL_Rect* GetLocalCollisionRect();
