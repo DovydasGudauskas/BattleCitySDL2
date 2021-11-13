@@ -43,7 +43,11 @@ public:
 	~PlayerController();
 
 	void Tick() override;
+
+	static vector<PlayerController*>* GetAllLocalPlayers();
 private:
+	static vector<PlayerController*> allLocalPlayers;
+
 	PlayerControllerKeymapping keymap;
 };
 

@@ -45,16 +45,21 @@ std::list<TankController*>* TankController::GetAllControllers()
 
 // ************************************
 
+vector<PlayerController*> PlayerController::allLocalPlayers = vector<PlayerController*>();
+
 PlayerController::PlayerController()
 {
+	allLocalPlayers.push_back(this);
 }
 
 PlayerController::PlayerController(PlayerControllerKeymapping KeyMap):keymap(KeyMap)
 {
+	allLocalPlayers.push_back(this);
 }
 
 PlayerController::~PlayerController()
 {
+	allLocalPlayers.erase(remove(allLocalPlayers.begin(), allLocalPlayers.end(), this));
 }
 
 
@@ -76,6 +81,11 @@ void PlayerController::Tick()
 
 	if (GetAsyncKeyState(keymap.fire))
 		controlTank->Fire();
+}
+
+vector<PlayerController*>* PlayerController::GetAllLocalPlayers()
+{
+	return &allLocalPlayers;
 }
 
 // ***********************************
@@ -158,4 +168,18 @@ void AIController::Tick() // override TankController
 		controlTank->SetDirection(RandomDirection());
 
 	controlTank->GoDirection(DirectionToVec(controlTank->GetDirection()));
+
+	vector<PlayerController*>* players = PlayerController::GetAllLocalPlayers();
+	for (size_t i = 0; i < players->size(); i++)
+	{
+		Tank* playerTank = players->at(i)->GetControlTank();
+		if (playerTank == nullptr)
+			continue;
+
+		if (ShouldFire(playerTank->GetPosition()))
+		{
+			controlTank->Fire();
+			break;
+		}
+	}
 }
