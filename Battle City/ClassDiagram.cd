@@ -18,7 +18,7 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="CollidableSpriteObject" Collapsed="true">
-    <Position X="10" Y="3.5" Width="1.5" />
+    <Position X="9.5" Y="3.5" Width="2" />
     <TypeIdentifier>
       <HashCode>CAAACAAEAAEEAQBAIJEAFAIIAAGAAUCAIBQAACAAQAA=</HashCode>
       <FileName>SpriteObject.h</FileName>
@@ -127,20 +127,6 @@
   </Class>
   <Class Name="Text" Collapsed="true">
     <Position X="8.5" Y="2" Width="1.5" />
-    <Members>
-      <Method Name="~Text" Hidden="true" />
-      <Method Name="ClearText" Hidden="true" />
-      <Method Name="Enable" Hidden="true" />
-      <Field Name="enabled" Hidden="true" />
-      <Method Name="GetPosition" Hidden="true" />
-      <Method Name="IsEnabled" Hidden="true" />
-      <Field Name="originalText" Hidden="true" />
-      <Field Name="position" Hidden="true" />
-      <Method Name="SetPosition" Hidden="true" />
-      <Method Name="SetText" Hidden="true" />
-      <Method Name="Text" Hidden="true" />
-      <Method Name="Translate" Hidden="true" />
-    </Members>
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
