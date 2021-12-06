@@ -161,7 +161,6 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Rendering.cpp" />
-    <ClCompile Include="Server.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="SpriteObject.cpp" />
     <ClCompile Include="Text.cpp" />
